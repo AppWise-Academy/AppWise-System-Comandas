@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Tokens de diseño del sistema (Tailwind v4: config en CSS)
+   Se usan como bg-marca-500, text-estado-lista, etc.
+   ============================================================ */
+@theme {
+  --color-marca-50: #fff7ed;
+  --color-marca-100: #ffedd5;
+  --color-marca-200: #fed7aa;
+  --color-marca-400: #fb923c;
+  --color-marca-500: #f97316;
+  --color-marca-600: #ea580c;
+  --color-marca-700: #c2410c;
+
+  --font-display: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-100 text-slate-900 antialiased;
+  font-family: var(--font-display);
+}
+
+/* Scrollbar discreta para las columnas de cocina */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+/* Animación de entrada para las comandas que llegan por socket */
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animar-entrada {
+  animation: entrar 0.28s ease-out;
+}
