@@ -1,5 +1,5 @@
 import { register } from "../services/auth.service.js";
-import ApiError from "../shared/apiError.js";
+import ApiError from "../shared/errors/ApiError.js";
 import { created } from "../shared/apiResponse.js";
 
 async function registerController(req, res) {
