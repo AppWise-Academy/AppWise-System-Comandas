@@ -7,4 +7,8 @@ export const SETTINGS_ENV = {
   db: {
     uri: required("MONGO_URI"),
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiresIn: process.JWT_EXPIRES_IN
+  }
 };

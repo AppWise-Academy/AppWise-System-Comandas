@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerController } from "../controllers/user.controller.js";
+import { registerController, loginController } from "../controllers/user.controller.js";
 import {validateInput} from "../middlewares/validateInput.js"
 import { body } from "express-validator"
 import { ROLES } from "../shared/constants.js" 
@@ -14,6 +14,16 @@ router.post("/register",
     body("email").trim().isEmail().withMessage("email invalido")
   ],
   validateInput,
-  registerController);
+  registerController
+);
+
+router.post("/login",
+  [
+    body("email").trim().isEmail().withMessage("email invalido"),
+    body("password").isLength({min:8}).withMessage("password debe contener minimo 8 caracteres"),    
+  ],
+  validateInput,
+  loginController
+);
 
 export default router;
