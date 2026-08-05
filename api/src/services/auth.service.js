@@ -1,6 +1,6 @@
 import UserModel from "../models/User.js";
-import ApiError from "../shared/apiError.js";
 import {generarToken} from "../shared/generarToken.js"
+import ApiError from "../shared/errors/ApiError.js";
 
 async function register({ name, email, password }) {
   const exist = await UserModel.findOne({ email });

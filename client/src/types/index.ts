@@ -1,46 +1,14 @@
+// ============================================================
+// types/index.ts — Todo el dominio en un lugar.
+// Los alumnos van a ir rellenando la API real y estos tipos
+// guían qué tiene que devolver cada endpoint.
+// ============================================================
+
 export type Rol = "admin" | "mozo" | "cocina" | "cajero";
+export type Sector = "salon" | "terraza" | "barra" | "vip";
+export type MetodoPago = "efectivo" | "tarjeta" | "transferencia";
 
-export interface UserInterface {
-  id: string;
-  name: string;
-  email: string;
-  rol: Rol;
-  isActive: boolean;
-  avatar: string | null;
-}
-
-export interface ErrorValidacion {
-  campo: string;
-  mensaje: string;
-}
-
-export interface MetaPaginacion {
-  total: number;
-  page: number;
-  limit: number;
-  paginas: number;
-  haySiguiente: boolean;
-}
-
-export interface RespuestaApi<T> {
-  ok: true;
-  data: T;
-  meta?: MetaPaginacion;
-  noLeidas?: number;
-}
-
-/** Error que lanza el cliente HTTP (Error + datos que manda la API) */
-export interface ErrorApi extends Error {
-  status?: number;
-  codigo?: string;
-  errores?: ErrorValidacion[];
-}
-
-export interface SesionAuth {
-  usuario: UserInterface;
-  accessToken: string;
-  refreshToken: string;
-}
+export type EstadoMesa = "libre" | "ocupada" | "reservada" | "cuenta";
 
 export type EstadoComanda =
   | "pendiente"
@@ -50,15 +18,101 @@ export type EstadoComanda =
   | "pagada"
   | "cancelada";
 
-export type EstadoMesa = "libre" | "ocupada" | "reservada" | "cuenta";
+export type EstadoItem =
+  | "pendiente"
+  | "en_preparacion"
+  | "listo"
+  | "entregado"
+  | "cancelado";
+
+// ── Entidades ────────────────────────────────────────────────
+
+export interface Usuario {
+  id: string;
+  nombre: string;
+  email: string;
+  rol: Rol;
+  activo: boolean;
+  avatar: string | null;
+}
+
+export interface Mesa {
+  id: string;
+  numero: number;
+  capacidad: number;
+  sector: Sector;
+  estado: EstadoMesa;
+  mozo: Pick<Usuario, "id" | "nombre"> | null;
+  comensales: number;
+  abiertaEn: string | null;
+}
+
+export interface Categoria {
+  id: string;
+  nombre: string;
+  icono: string;
+  orden: number;
+}
+
+export interface Producto {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  categoria: Categoria;
+  tiempoPreparacion: number;
+  disponible: boolean;
+  vecesVendido: number;
+  imagen: string | null;
+}
+
+export interface CategoriaConProductos extends Categoria {
+  productos: Producto[];
+}
+
+export interface ItemComanda {
+  _id: string;
+  producto: string;
+  nombre: string;   // snapshot — no cambia si el producto cambia de nombre
+  precio: number;   // snapshot — el precio que pagó el cliente
+  cantidad: number;
+  notas: string;
+  estado: EstadoItem;
+}
+
+export interface Comanda {
+  id: string;
+  numero: number;
+  mesa: Pick<Mesa, "id" | "numero" | "sector">;
+  mozo: Pick<Usuario, "id" | "nombre">;
+  items: ItemComanda[];
+  estado: EstadoComanda;
+  total: number;
+  observaciones: string;
+  enviadaEn: string;
+  listaEn: string | null;
+  entregadaEn: string | null;
+  pagadaEn: string | null;
+  metodoPago: MetodoPago | null;
+  createdAt: string;
+}
+
+export interface Notificacion {
+  id: string;
+  tipo: "comanda_lista" | "comanda_nueva" | "mesa_cuenta" | "sistema";
+  mensaje: string;
+  leida: boolean;
+  mesa: number | null;
+  createdAt: string;
+}
 
 export interface StatsComandas {
   comandasHoy: number;
-  porEstado: Partial<Record<EstadoComanda, number>>;
   ventasHoy: number;
-  comandasPagadas: number;
   ticketPromedio: number;
   tiempoPromedioPreparacion: number;
+  comandasPagadas: number;
+  porEstado: Partial<Record<EstadoComanda, number>>;
 }
 
 export interface StatsMesas {
@@ -69,22 +123,16 @@ export interface StatsMesas {
   ocupacion: number;
 }
 
-export interface Categoria {
-  id: string;
-  nombre: string;
-  icono: string;
-  orden: number;
-  activa: boolean;
+// ── Inputs ───────────────────────────────────────────────────
+
+export interface ItemInput {
+  productoId: string;
+  cantidad: number;
+  notas?: string;
 }
 
-export interface Producto {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  precio: number;
-  categoria: Categoria | string;
-  tiempoPreparacion: number;
-  disponible: boolean;
-  vecesVendido: number;
-  imagen: string | null;
+export interface ComandaInput {
+  mesaId: string;
+  items: ItemInput[];
+  observaciones?: string;
 }
