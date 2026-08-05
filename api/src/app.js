@@ -3,11 +3,13 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import apiRoutes from "./routes/index.js";
+import "dotenv/config"; //para los tests
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { globalLimiter, authLimiter } from "./middlewares/rateLimiter.js";
 import { corsMiddleware } from "./middlewares/cors.js";
 import { helmetMiddleware } from "./middlewares/helmet.js";
 import { NotFoundError } from "./shared/errors/NotFoundError.js";
+import { SuccessResponse } from "./shared/responses/SuccessResponse.js";
 
 const app = express();
 
@@ -44,14 +46,10 @@ app.use("/api/auth", authLimiter);
 //8. Rutas de la app
 //-------------------
 app.get("/health", (req, res) => {
-  res.json({
-    success: true,
-    message: "API online",
-    data: {
-      uptime: process.uptime().toFixed(2)+" segundos",
-    },
-    timestamp: new Date().toISOString(),
-  });
+  const uptime = process.uptime().toFixed(2)+" segundos";
+  const healthResponse = new SuccessResponse("API online", 200, {uptime})
+
+  res.status(200).json(healthResponse);
 });
 
 //ruta para probar un error no controlado (status 500)

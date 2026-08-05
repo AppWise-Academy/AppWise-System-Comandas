@@ -30,6 +30,10 @@ src/
 │   └── errorHandler.js
 │
 ├── shared/
+│   ├── responses/
+│   │    ├── ErrorResponse.js
+│   │    └── SuccessResponse.js
+│   │
 │   └── errors/
 │       ├── ApiError.js
 │       ├── AuthError.js

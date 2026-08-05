@@ -28,7 +28,9 @@ Crítico: No debe permitir que la app se caiga; incluir logging y fallback respo
 
 
 Modelos:
-ErrorResponse (Estructura Estándar)
+---
+``ErrorResponse (Estructura Estándar)``
+---
 {
   success: false,
   message: "Descripción clara del error",
@@ -39,13 +41,16 @@ ErrorResponse (Estructura Estándar)
   timestamp: ISO8601,
   path: "/ruta/del/error"
 }
-SuccessResponse (Estructura Estándar)
-{
-  success: true,
+---
+``SuccessResponse (Estructura Estándar)``
+---
+{ 
+  success: true,  
   message: "Operación exitosa",
   data: { /* payload */ },
   timestamp: ISO8601
 }
+---
 
 
 
