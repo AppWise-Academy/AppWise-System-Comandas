@@ -8,12 +8,12 @@ export function Card({ children, className = "" }: { children: ReactNode; classN
   );
 }
 
-export function CardStat({ valor, etiqueta, icono }: { valor: string | number; etiqueta: string; icono?: string }) {
+export function Stat({ valor, label, icon }: { valor: string | number; label: string; icon?: string }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
-      {icono && <div className="text-xl">{icono}</div>}
-      <div className="text-2xl font-extrabold text-marca-600">{valor}</div>
-      <div className="text-xs text-slate-500">{etiqueta}</div>
+      {icon && <div className="mb-1 text-2xl">{icon}</div>}
+      <div className="text-2xl font-extrabold text-orange-600">{valor}</div>
+      <div className="mt-0.5 text-xs text-slate-500">{label}</div>
     </div>
   );
 }
