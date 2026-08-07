@@ -37,7 +37,7 @@ export function errorHandler(err, req, res, _next){
 //API ERROR
 //-------------
   if (err instanceof ApiError) {
-    const apiErrorResponse = new ErrorResponse(err.message, err.statusCode, null, req.originalUrl);
+    const apiErrorResponse = new ErrorResponse(err.message, err.statusCode, null, req.originalUrl, err.code);
     return res.status(err.statusCode).json(apiErrorResponse);
   }
 
@@ -47,7 +47,7 @@ export function errorHandler(err, req, res, _next){
 //-------------
   if (err instanceof ZodError) {
     const zodErrors = transformZodErrors(err.issues);
-    const zodErrorResponse = new ErrorResponse("Error de validación de datos", err.statusCode, zodErrors, req.originalUrl);
+    const zodErrorResponse = new ErrorResponse("Error de validación de datos", 400, zodErrors, req.originalUrl);
 
     return res.status(400).json(zodErrorResponse);
   }
