@@ -15,7 +15,7 @@ async function login({email, password}) {
   const usuario = await UserModel.findOne({email}).select("+password");
   
   if(!usuario || !(await usuario.comparePassword(password)))
-    throw ApiError.forbidden("El email o password errados","LOGIN_ERROR")
+    throw ApiError("El email o password errados","LOGIN_ERROR")
 
   const token = generarToken(usuario)
   console.log("paso 1")

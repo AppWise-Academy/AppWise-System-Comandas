@@ -1,5 +1,4 @@
 import { register, login } from "../services/auth.service.js";
-import ApiError from "../shared/errors/ApiError.js";
 import { created, ok } from "../shared/apiResponse.js";
 
 async function registerController(req, res) {
@@ -22,8 +21,8 @@ async function loginController(req, res) {
     const {usuario, token} = await login({email, password})
     ok(res, {usuario,token})    
 
-  } catch (error) {
-    return res.status(500).json({
+  } catch (error) {    
+    return res.status(error.status).json({
       msg: error.message,
       code: error.code
     })
