@@ -1,7 +1,7 @@
-import ApiError from "./ApiError";
+import ApiError from "./ApiError.js";
 
 export class AuthError extends ApiError {
-  constructor(menssage = "No autorizado") {
-    super(message, 401);
+  constructor(message = "No autorizado", code = null) {
+    super(message, 401, code);
   }
 }
