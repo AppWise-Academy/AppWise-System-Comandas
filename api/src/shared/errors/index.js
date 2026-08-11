@@ -7,6 +7,7 @@ export { ForbiddenError } from "./ForbiddenError.js";
 export { NotFoundError } from "./NotFoundError.js";
 export { TooManyRequestsError } from "./TooManyRequestsError.js";
 export { ValidationError } from "./ValidationError.js";
+export { ExternalServiceError } from "./ExternalServiceError.js";
 
 //para importar cualquier instancia de error:
 // import {

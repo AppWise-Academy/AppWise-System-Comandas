@@ -1,0 +1,58 @@
+<!--
+  Datos esperados: { name }
+
+  Nota didáctica: usamos estilos INLINE (style="...") en vez de una hoja de
+  estilos <style> o una clase CSS. La mayoría de los clientes de correo
+  (Gmail, Outlook) ignoran o directamente eliminan el <style> del <head>,
+  así que para que el diseño se vea igual en todos lados, cada elemento
+  lleva su propio estilo. Es más repetitivo que CSS normal, pero es el
+  estándar de la industria para email.
+-->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>¡Bienvenido/a!</title>
+  </head>
+  <body style="margin:0; padding:0; background-color:#f4f4f7; font-family:Arial, Helvetica, sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f7; padding:24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:8px; overflow:hidden;">
+
+            <!-- Header -->
+            <tr>
+              <td style="background-color:#4CAF50; padding:24px; text-align:center;">
+                <h1 style="margin:0; color:#ffffff; font-size:22px;">🍽️ Sistema de Comandas</h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:32px 24px;">
+                <h2 style="margin-top:0; color:#333333;">¡Hola, {{name}}!</h2>
+                <p style="color:#555555; font-size:15px; line-height:1.5;">
+                  Tu cuenta fue creada correctamente. A partir de ahora podés
+                  acceder al sistema para gestionar comandas, mesas y pedidos.
+                </p>
+                <p style="color:#555555; font-size:15px; line-height:1.5;">
+                  Si vos no solicitaste esta cuenta, podés ignorar este correo.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style="background-color:#f4f4f7; padding:16px 24px; text-align:center;">
+                <p style="margin:0; color:#999999; font-size:12px;">
+                  Este es un correo automático, por favor no lo respondas.
+                </p>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

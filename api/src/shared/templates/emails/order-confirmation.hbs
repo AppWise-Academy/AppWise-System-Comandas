@@ -1,0 +1,149 @@
+<!--
+  Datos esperados:
+  {
+    customerName: string,
+    orderNumber: string | number,
+    table: string | number,
+    items: [{ name, quantity, price }],
+    total: number,
+    estimatedTime: string   (ej: "20-25 min")
+  }
+
+  El helper "each" (ver más abajo) recorre el array de items sin que el
+  template ejecute código: solo itera y muestra. Todo el cálculo (subtotal
+  por item, total general) se hace ANTES, en excel/email.service, y llega
+  ya resuelto.
+
+  OJO: no escribas tags de Handlebars dentro de comentarios HTML como este
+  — Handlebars no entiende de y los va a intentar compilar igual,
+  rompiendo el parseo de todo el archivo si quedan sin cerrar.
+-->
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Confirmación de tu comanda</title>
+  </head>
+  <body
+    style="margin:0; padding:0; background-color:#f4f4f7; font-family:Arial, Helvetica, sans-serif;"
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background-color:#f4f4f7; padding:24px 0;"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="520"
+            cellpadding="0"
+            cellspacing="0"
+            style="background-color:#ffffff; border-radius:8px; overflow:hidden;"
+          >
+
+            <!-- Header -->
+            <tr>
+              <td
+                style="background-color:#333333; padding:24px; text-align:center;"
+              >
+                <h1 style="margin:0; color:#ffffff; font-size:20px;">🧾 Comanda
+                  #{{orderNumber}}
+                  confirmada</h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:28px 24px;">
+                <p style="color:#555555; font-size:15px;">Hola
+                  {{customerName}}, tu pedido en la
+                  <strong>Mesa {{table}}</strong>
+                  fue recibido por cocina.</p>
+
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="border-collapse:collapse; margin-top:16px;"
+                >
+                  <thead>
+                    <tr>
+                      <th
+                        align="left"
+                        style="border-bottom:2px solid #eeeeee; padding:8px 4px; font-size:13px; color:#888888;"
+                      >Item</th>
+                      <th
+                        align="center"
+                        style="border-bottom:2px solid #eeeeee; padding:8px 4px; font-size:13px; color:#888888;"
+                      >Cant.</th>
+                      <th
+                        align="right"
+                        style="border-bottom:2px solid #eeeeee; padding:8px 4px; font-size:13px; color:#888888;"
+                      >Precio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#each items}}
+                      <tr>
+                        <td
+                          style="border-bottom:1px solid #f0f0f0; padding:8px 4px; color:#333333; font-size:14px;"
+                        >{{this.name}}</td>
+                        <td
+                          align="center"
+                          style="border-bottom:1px solid #f0f0f0; padding:8px 4px; color:#333333; font-size:14px;"
+                        >{{this.quantity}}</td>
+                        <td
+                          align="right"
+                          style="border-bottom:1px solid #f0f0f0; padding:8px 4px; color:#333333; font-size:14px;"
+                        >${{this.price}}</td>
+                      </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="margin-top:16px;"
+                >
+                  <tr>
+                    <td
+                      align="right"
+                      style="padding:8px 4px; font-size:16px; color:#333333;"
+                    >
+                      <strong>Total: ${{total}}</strong>
+                    </td>
+                  </tr>
+                </table>
+
+                {{#if estimatedTime}}
+                  <p style="color:#555555; font-size:14px; margin-top:16px;">
+                    ⏱️ Tiempo estimado de preparación:
+                    <strong>{{estimatedTime}}</strong>
+                  </p>
+                {{/if}}
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td
+                style="background-color:#f4f4f7; padding:16px 24px; text-align:center;"
+              >
+                <p style="margin:0; color:#999999; font-size:12px;">¡Gracias por
+                  tu pedido!</p>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
