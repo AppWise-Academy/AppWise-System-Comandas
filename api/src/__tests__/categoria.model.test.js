@@ -1,21 +1,39 @@
 import CategoriaModel from "../models/Categoria.js";
+import { createCategoriaSchema } from "../schemas/categoria.schema.js";
 
 describe("Schema de Categoria", () => {
   it("aplica defaults y timestamps", () => {
-    const categoria = new CategoriaModel({ nombre: "Entradas" });
+    const categoria = new CategoriaModel({ name: "Entradas" });
 
-    expect(categoria.activa).toBe(true);
-    expect(categoria.orden).toBe(0);
-    expect(categoria.imagen).toBeNull();
+    expect(categoria.active).toBe(true);
+    expect(categoria.order).toBe(0);
+    expect(categoria.image).toBeNull();
     expect(CategoriaModel.schema.path("createdAt")).toBeDefined();
     expect(CategoriaModel.schema.path("updatedAt")).toBeDefined();
   });
 
-  it("valida nombre requerido y orden no negativo", () => {
-    const categoria = new CategoriaModel({ orden: -1 });
+  it("valida name requerido y order no negativo", () => {
+    const categoria = new CategoriaModel({ order: -1 });
     const error = categoria.validateSync();
 
-    expect(error.errors.nombre).toBeDefined();
-    expect(error.errors.orden).toBeDefined();
+    expect(error.errors.name).toBeDefined();
+    expect(error.errors.order).toBeDefined();
   });
+
+  it("normaliza los datos de creación", () => {
+    const result = createCategoriaSchema.parse({
+      name: "  Entradas  ",
+      description: "Categoría de entradas",
+      order: 1,
+    });
+
+    expect(result).toEqual({
+      name: "Entradas",
+      description: "Categoría de entradas",
+      order: 1,
+      active: true,
+      image: null,
+    });
+  });
+
 });

@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const categoriaSchema = new Schema(
   {
-    nombre: {
+    name: {
       type: String,
       required: [true, "Name is required"],
       unique: true,
@@ -10,22 +10,22 @@ const categoriaSchema = new Schema(
       minlength: [2, "Min 2 characters"],
       maxlength: [80, "Max 80 characters"],
     },
-    descripcion: {
+    description: {
       type: String,
       trim: true,
       maxlength: [500, "Max 500 characters"],
     },
-    orden: {
+    order: {
       type: Number,
       default: 0,
       min: [0, "Order cannot be negative"],
     },
-    activa: {
+    active: {
       type: Boolean,
       default: true,
       index: true,
     },
-    imagen: {
+    image: {
       type: String,
       default: null,
     },
@@ -36,9 +36,8 @@ const categoriaSchema = new Schema(
   },
 );
 
-categoriaSchema.index({ activa: 1, orden: 1, _id: 1 });
+categoriaSchema.index({ active: 1, order: 1, _id: 1 });
 
 const CategoriaModel = model("Categoria", categoriaSchema);
 
 export default CategoriaModel;
-
