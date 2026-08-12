@@ -1,5 +1,5 @@
 import CategoriaModel from "../models/Categoria.js";
-import { ConflictError, ValidationError } from "../shared/errors/index.js";
+import { ConflictError, NotFoundError, ValidationError } from "../shared/errors/index.js";
 
 function translateMongooseError(error) {
   if (error?.code === 11000) {
@@ -21,7 +21,7 @@ export async function create(data) {
   }
 }
 
-export async function list({ skip = 0, limit = 20, activas = true } = {}) {
+export async function getAll({ skip = 0, limit = 20, activas = true } = {}) {
   const filter = { active: activas };
   const [data, totalItems] = await Promise.all([
     CategoriaModel.find(filter)
@@ -39,4 +39,22 @@ export async function list({ skip = 0, limit = 20, activas = true } = {}) {
       totalItems,
     },
   };
+}
+
+export async function getById(id) {
+  try {
+    const categoria = await CategoriaModel.findById(id);
+
+    if (!categoria) {
+      throw new NotFoundError("Category not found", "CATEGORY_NOT_FOUND");
+    }
+
+    return categoria;
+  } catch (error) {
+    if (error?.name === "CastError") {
+      throw new NotFoundError("Category not found", "CATEGORY_NOT_FOUND");
+    }
+
+    throw error;
+  }
 }

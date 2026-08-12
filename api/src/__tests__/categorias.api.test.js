@@ -3,11 +3,13 @@ import request from "supertest";
 
 const findMock = jest.fn();
 const countDocumentsMock = jest.fn();
+const findByIdMock = jest.fn();
 
 jest.unstable_mockModule("../models/Categoria.js", () => ({
   default: {
     find: findMock,
     countDocuments: countDocumentsMock,
+    findById: findByIdMock,
   },
 }));
 
@@ -76,6 +78,30 @@ describe("API de categorías", () => {
     expect(findMock).toHaveBeenCalledWith({ active: true });
     expect(query.skip).toHaveBeenCalledWith(0);
     expect(query.limit).toHaveBeenCalledWith(20);
+  });
+
+  it("devuelve una categoría detallada cuando existe", async () => {
+    const data = { _id: "category-1", name: "Entradas", active: true };
+    findByIdMock.mockResolvedValue(data);
+
+    const response = await request(app)
+      .get("/api/menu/categorias/507f1f77bcf86cd799439011");
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.data).toEqual(data);
+    expect(findByIdMock).toHaveBeenCalledWith("507f1f77bcf86cd799439011");
+  });
+
+  it("devuelve 404 cuando la categoría no existe", async () => {
+    findByIdMock.mockResolvedValue(null);
+
+    const response = await request(app)
+      .get("/api/menu/categorias/507f1f77bcf86cd799439011");
+
+    expect(response.status).toBe(404);
+    expect(response.body.success).toBe(false);
+    expect(response.body.code).toBe("CATEGORY_NOT_FOUND");
   });
 });
 
