@@ -1,4 +1,5 @@
 import { ZodError } from "zod";
+import multer from "multer";
 import ApiError from "../shared/errors/ApiError.js";
 import { logger } from "../utils/logger.js";
 import { ErrorResponse } from "../shared/responses/ErrorResponse.js";
@@ -31,6 +32,32 @@ export function errorHandler(err, req, res, _next){
     path: req.originalUrl,  //se trae del request 
     stack: err.stack,       //se trae del Error
   });
+
+//-------------
+//MULTIPART / CLOUDINARY ERRORS
+//-------------
+  if (err instanceof multer.MulterError) {
+    const multerErrors = {
+      LIMIT_FILE_SIZE: ["La imagen no puede superar 5 MB", "IMAGE_TOO_LARGE"],
+      LIMIT_UNEXPECTED_FILE: ["El campo de imagen no es válido", "INVALID_IMAGE_FIELD"],
+    };
+    const [message, code] = multerErrors[err.code] ?? ["Error al procesar la imagen", "IMAGE_UPLOAD_INVALID"];
+    const uploadErrorResponse = new ErrorResponse(message, 400, null, req.originalUrl, code);
+
+    return res.status(400).json(uploadErrorResponse);
+  }
+
+  if (Number.isInteger(err?.http_code)) {
+    const cloudinaryErrorResponse = new ErrorResponse(
+      "No se pudo procesar la imagen",
+      502,
+      null,
+      req.originalUrl,
+      "IMAGE_UPLOAD_FAILED",
+    );
+
+    return res.status(502).json(cloudinaryErrorResponse);
+  }
 
 
 //-------------
