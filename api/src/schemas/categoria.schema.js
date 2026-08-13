@@ -29,6 +29,12 @@ export const createCategoriaSchema = z.object({
     .url("Image must be a valid URL")
     .nullable()
     .default(null),
+
+  imagePublicId: z
+    .string()
+    .trim()
+    .nullable()
+    .default(null),
 });
 
 export const updateCategoriaSchema = z.object({
@@ -58,6 +64,12 @@ export const updateCategoriaSchema = z.object({
   image: z
     .string()
     .url("Image must be a valid URL")
+    .nullable()
+    .optional(),
+
+  imagePublicId: z
+    .string()
+    .trim()
     .nullable()
     .optional(),
 });

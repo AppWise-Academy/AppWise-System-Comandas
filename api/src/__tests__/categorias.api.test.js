@@ -70,6 +70,7 @@ describe("API de categorías", () => {
       order: 1,
       active: true,
       image: "https://res.cloudinary.com/demo/image/upload/category.webp",
+      imagePublicId: "appwise-comandas/menu/categorias/category",
     };
     createMock.mockResolvedValue(createdCategory);
 
@@ -89,6 +90,7 @@ describe("API de categorías", () => {
       order: 1,
       active: true,
       image: "https://res.cloudinary.com/demo/image/upload/category.webp",
+      imagePublicId: "appwise-comandas/menu/categorias/category",
     });
   });
 
@@ -100,6 +102,7 @@ describe("API de categorías", () => {
       order: 2,
       active: true,
       image: null,
+      imagePublicId: null,
     };
     createMock.mockResolvedValue(createdCategory);
 
@@ -119,6 +122,7 @@ describe("API de categorías", () => {
       order: 2,
       active: true,
       image: null,
+      imagePublicId: null,
     });
   });
 
@@ -130,6 +134,7 @@ describe("API de categorías", () => {
       order: 1,
       active: true,
       image: null,
+      imagePublicId: null,
     };
     const updatedCategory = { ...existingCategory, name: "Entradas frías" };
     findByIdMock.mockResolvedValue(existingCategory);
@@ -163,10 +168,12 @@ describe("API de categorías", () => {
       _id: "category-1",
       name: "Entradas",
       image: "https://res.cloudinary.com/demo/image/upload/appwise-comandas/menu/categorias/old.webp",
+      imagePublicId: "appwise-comandas/menu/categorias/old",
     };
     const updatedCategory = {
       ...existingCategory,
       image: "https://res.cloudinary.com/demo/image/upload/category.webp",
+      imagePublicId: "appwise-comandas/menu/categorias/category",
     };
     findByIdMock.mockResolvedValue(existingCategory);
     findByIdAndUpdateMock.mockResolvedValue(updatedCategory);
@@ -184,6 +191,7 @@ describe("API de categorías", () => {
       {
         name: "Entradas",
         image: "https://res.cloudinary.com/demo/image/upload/category.webp",
+        imagePublicId: "appwise-comandas/menu/categorias/category",
       },
       { returnDocument: "after", runValidators: true },
     );
@@ -198,6 +206,7 @@ describe("API de categorías", () => {
       _id: "category-1",
       name: "Entradas",
       image: "https://res.cloudinary.com/demo/image/upload/appwise-comandas/menu/categorias/old.webp",
+      imagePublicId: "appwise-comandas/menu/categorias/old",
     });
     findByIdAndUpdateMock.mockRejectedValue(new Error("Database unavailable"));
 

@@ -8,6 +8,7 @@ describe("Schema de Categoria", () => {
     expect(categoria.active).toBe(true);
     expect(categoria.order).toBe(0);
     expect(categoria.image).toBeNull();
+    expect(categoria.imagePublicId).toBeNull();
     expect(CategoriaModel.schema.path("createdAt")).toBeDefined();
     expect(CategoriaModel.schema.path("updatedAt")).toBeDefined();
   });
@@ -33,6 +34,7 @@ describe("Schema de Categoria", () => {
       order: 1,
       active: true,
       image: null,
+      imagePublicId: null,
     });
   });
 

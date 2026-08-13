@@ -14,36 +14,6 @@ function translateMongooseError(error) {
   throw error;
 }
 
-// Todo: remover y agregar public id al schema
-function getCloudinaryPublicId(imageUrl) {
-  if (typeof imageUrl !== "string") {
-    return null;
-  }
-
-  try {
-    const url = new URL(imageUrl);
-    const uploadMarker = "/image/upload/";
-    const uploadIndex = url.pathname.indexOf(uploadMarker);
-
-    if (uploadIndex === -1) {
-      return null;
-    }
-
-    let publicId = decodeURIComponent(url.pathname.slice(uploadIndex + uploadMarker.length));
-    publicId = publicId.replace(/^v\d+\//, "");
-
-    const lastSlashIndex = publicId.lastIndexOf("/");
-    const extensionIndex = publicId.lastIndexOf(".");
-    if (extensionIndex > lastSlashIndex) {
-      publicId = publicId.slice(0, extensionIndex);
-    }
-
-    return publicId || null;
-  } catch {
-    return null;
-  }
-}
-
 async function destroyCloudinaryImage(publicId) {
   if (!publicId) {
     return;
@@ -64,7 +34,7 @@ export async function create(data) {
   }
 }
 
-export async function update(id, data, { uploadedImagePublicId = null } = {}) {
+export async function update(id, data) {
   let imageToDestroy = null;
 
   try {
@@ -83,13 +53,13 @@ export async function update(id, data, { uploadedImagePublicId = null } = {}) {
       throw new ApiError("An error has ocurred during category updating", 500, "CATEGORY_NOT_UPDATED");
     }
 
-    imageToDestroy = uploadedImagePublicId
-      ? getCloudinaryPublicId(existingCategoria.image)
+    imageToDestroy = data.imagePublicId
+      ? existingCategoria.imagePublicId
       : null;
 
     return updatedCategoria;
   } catch (error) {
-    imageToDestroy = uploadedImagePublicId;
+    imageToDestroy = data.imagePublicId ?? null;
 
     if (error?.name === "CastError") {
       throw new NotFoundError("Category not found", "CATEGORY_NOT_FOUND");

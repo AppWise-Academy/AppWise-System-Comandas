@@ -28,5 +28,9 @@ export function normalizeCategoriaBody(req) {
     body.image = uploadedImageUrl;
   }
 
+  if (req.file?.filename) {
+    body.imagePublicId = req.file.filename;
+  }
+
   return body;
 }

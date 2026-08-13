@@ -15,9 +15,7 @@ export async function createCategoria(req, res) {
 
 export async function updateCategoria(req, res) {
   const data = updateCategoriaSchema.parse(normalizeCategoriaBody(req));
-  const categoria = await update(req.params.id, data, {
-    uploadedImagePublicId: req.file?.filename ?? null,
-  });
+  const categoria = await update(req.params.id, data);
 
   const response = new SuccessResponse("Category updated", 200, categoria);
 

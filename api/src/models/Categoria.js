@@ -29,6 +29,10 @@ const categoriaSchema = new Schema(
       type: String,
       default: null,
     },
+    imagePublicId: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
