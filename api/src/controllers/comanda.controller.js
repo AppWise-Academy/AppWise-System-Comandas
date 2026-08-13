@@ -18,5 +18,18 @@ export async function createComanda(req, res) {
     })
   }
 }
+export async function addItem(req, res) {
+    try {
+        const comanda = await comandaService.addItem(
+            req.params.id,
+            req.body
+        )
 
+        return res.status(201).json(comanda)
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            message: error.message
+        })
+    }
+}
 
