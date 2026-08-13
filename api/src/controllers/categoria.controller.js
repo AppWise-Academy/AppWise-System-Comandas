@@ -1,35 +1,27 @@
-import { create, getById, getAll } from "../services/categoria.service.js";
-import { createCategoriaSchema } from "../schemas/categoria.schema.js";
+import { create, getById, getAll, update } from "../services/categoria.service.js";
+import { createCategoriaSchema, updateCategoriaSchema } from "../schemas/categoria.schema.js";
 import { SuccessResponse } from "../shared/responses/SuccessResponse.js";
+import { normalizeCategoriaBody } from "../utils/categoria.js";
 import { parseNonNegativeInteger, parsePositiveInteger } from "../utils/pagination.js";
 
 export async function createCategoria(req, res) {
-  const body = { ...req.body };
-
-  // Normalizo el body de la request
-  if (req.is("multipart/form-data")) {
-    if (body.order !== undefined) {
-      body.order = Number(body.order);
-    }
-
-    if (body.active === "true") {
-      body.active = true;
-    } else if (body.active === "false") {
-      body.active = false;
-    }
-  }
-
-  const uploadedImageUrl = req.file?.path ?? req.file?.secure_url ?? req.file?.url;
-  if (uploadedImageUrl) { 
-    body.image = uploadedImageUrl;
-  }
-
-  const data = createCategoriaSchema.parse(body);
+  const data = createCategoriaSchema.parse(normalizeCategoriaBody(req));
   const categoria = await create(data);
 
   const response = new SuccessResponse("Category created", 201, categoria);
 
   return res.status(201).json(response);
+}
+
+export async function updateCategoria(req, res) {
+  const data = updateCategoriaSchema.parse(normalizeCategoriaBody(req));
+  const categoria = await update(req.params.id, data, {
+    uploadedImagePublicId: req.file?.filename ?? null,
+  });
+
+  const response = new SuccessResponse("Category updated", 200, categoria);
+
+  return res.status(200).json(response);
 }
 
 export async function getAllCategorias(req, res) {
