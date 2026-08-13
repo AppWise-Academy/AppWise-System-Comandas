@@ -1,18 +1,7 @@
 import CategoriaModel from "../models/Categoria.js";
 import cloudinary from "../config/cloudinary.js";
-import { ApiError, ConflictError, NotFoundError, ValidationError } from "../shared/errors/index.js";
-
-function translateMongooseError(error) {
-  if (error?.code === 11000) {
-    throw new ConflictError("Category name is already registered", "CATEGORY_NAME_DUPLICATE");
-  }
-
-  if (error?.name === "ValidationError") {
-    throw new ValidationError("Invalid category data", "CATEGORY_INVALID");
-  }
-
-  throw error;
-}
+import { ApiError, NotFoundError } from "../shared/errors/index.js";
+import { translateMongooseError } from "../utils/errors.js";
 
 async function destroyCloudinaryImage(publicId) {
   if (!publicId) {
@@ -30,7 +19,11 @@ export async function create(data) {
   try {
     return await CategoriaModel.create(data);
   } catch (error) {
-    translateMongooseError(error);
+    translateMongooseError(
+      error,
+      error?.code === 11000 ? "Category name is already registered" : "Invalid category data",
+      error?.code === 11000 ? "CATEGORY_NAME_DUPLICATE" : "CATEGORY_INVALID",
+    );
   }
 }
 
@@ -65,7 +58,11 @@ export async function update(id, data) {
       throw new NotFoundError("Category not found", "CATEGORY_NOT_FOUND");
     }
 
-    translateMongooseError(error);
+    translateMongooseError(
+      error,
+      error?.code === 11000 ? "Category name is already registered" : "Invalid category data",
+      error?.code === 11000 ? "CATEGORY_NAME_DUPLICATE" : "CATEGORY_INVALID",
+    );
   } finally {
     await destroyCloudinaryImage(imageToDestroy);
   }
