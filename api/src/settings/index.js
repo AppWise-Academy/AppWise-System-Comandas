@@ -25,4 +25,21 @@ export const SETTINGS_ENV = {
       fromEmail: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
     },
   },
+  mercadopago: {
+    // Tampoco usamos required() acá: la API tiene que poder levantar sin
+    // este token configurado (solo van a fallar, con un error claro, los
+    // endpoints de pago si lo llamás sin haberlo seteado). Ver
+    // config/mercadopago.config.js para el chequeo real.
+    accessToken: process.env.MP_ACCESS_TOKEN,
+  },
+  // URLs públicas de cada lado de la app. Mercado Pago las necesita para
+  // saber A DÓNDE mandar al usuario (back_urls, del lado del front) y A
+  // DÓNDE avisarnos que hubo un pago (notification_url, del lado del back).
+  // Ver la sección "back_urls vs notification_url" en
+  // DOCUMENTACION_MERCADO_PAGO.md para el detalle de por qué son cosas
+  // distintas y por qué notification_url NO puede ser "localhost" en dev.
+  urls: {
+    backendUrl: process.env.BACKEND_URL || `http://localhost:${Number(process.env.PORT) || 4001}`,
+    frontendUrl: process.env.FRONTEND_URL || "http://localhost:5173",
+  },
 };

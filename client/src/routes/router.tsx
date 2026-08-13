@@ -7,6 +7,10 @@ import { NuevaComanda } from "../pages/NuevaComanda";
 import { Cocina } from "../pages/Cocina";
 import { Comandas } from "../pages/Comandas";
 import { Admin } from "../pages/Admin";
+import { Caja } from "../pages/Caja";
+import { Success } from "../pages/checkout/Success";
+import { Failure } from "../pages/checkout/Failure";
+import { Pending } from "../pages/checkout/Pending";
 
 export const router = createBrowserRouter([
   // ── Pública ───────────────────────────────────────────────
@@ -14,6 +18,14 @@ export const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+
+  // Rutas de las back_urls de Mercado Pago (ver payment.service.js).
+  // Quedan afuera del layout/RolGuard a propósito: a estas URLs te trae
+  // el navegador DESPUÉS de un pago, no necesariamente con una sesión
+  // activa en esta pestaña — no tiene sentido pedir login para verlas.
+  { path: "/checkout/success", element: <Success /> },
+  { path: "/checkout/failure", element: <Failure /> },
+  { path: "/checkout/pending", element: <Pending /> },
 
   // ── Privada: todo lo que está adentro del layout ──────────
   {
@@ -68,6 +80,15 @@ export const router = createBrowserRouter([
         element: (
           <RolGuard roles={["admin"]}>
             <Admin />
+          </RolGuard>
+        ),
+      },
+
+      {
+        path: "caja",
+        element: (
+          <RolGuard roles={["cajero", "admin"]}>
+            <Caja />
           </RolGuard>
         ),
       },

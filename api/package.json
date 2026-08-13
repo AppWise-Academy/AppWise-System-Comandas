@@ -23,6 +23,7 @@
     "handlebars": "^4.7.9",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
+    "mercadopago": "^3.4.0",
     "mongoose": "^9.8.1",
     "morgan": "^1.11.0",
     "nodemailer": "^9.0.5",

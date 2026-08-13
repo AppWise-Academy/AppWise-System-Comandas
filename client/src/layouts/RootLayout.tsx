@@ -1,5 +1,8 @@
+import { useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useSocketConnected } from "../hooks/useSocketConnected";
+import { getSocket } from "../lib/socket";
 import { Notificaciones } from "../components/Notificaciones";
 import { BadgeRol } from "../components/ui/Badge";
 import type { Rol } from "../types";
@@ -10,6 +13,7 @@ const LINKS: Record<Rol, { to: string; label: string }[]> = {
     { to: "/mesas", label: "Salón" },
     { to: "/comandas", label: "Comandas" },
     { to: "/cocina", label: "Cocina" },
+    { to: "/caja", label: "Caja" },
     { to: "/admin", label: "Panel" },
   ],
   mozo: [
@@ -23,6 +27,7 @@ const LINKS: Record<Rol, { to: string; label: string }[]> = {
   cajero: [
     { to: "/comandas", label: "Comandas" },
     { to: "/mesas", label: "Salón" },
+    { to: "/caja", label: "Caja" },
   ],
 };
 
@@ -30,6 +35,20 @@ export function RootLayout() {
   const { usuario, logout } = useAuth();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const conectado = useSocketConnected();
+
+  // El layout es el "dueño" de la conexión de Socket.io: se abre acá,
+  // apenas hay un usuario logueado (RootLayout solo se monta adentro del
+  // RolGuard), y se cierra si el usuario sale de la app. Cualquier página
+  // hija (ej: Caja.tsx) solo escucha eventos puntuales (payment_success),
+  // sin volver a conectar/desconectar el socket por su cuenta.
+  useEffect(() => {
+    const socket = getSocket();
+    socket.connect();
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const salir = () => {
     logout();
@@ -64,12 +83,13 @@ export function RootLayout() {
 
           {/* Derecha: conexión + campana + usuario */}
           <div className="flex items-center gap-3">
-            {/* Indicador WebSocket — los alumnos lo conectan en semana 6 */}
+            {/* Indicador real de Socket.io — refleja el estado del socket
+                que abre este mismo layout (ver useEffect arriba). */}
             <span
               className="text-xs text-slate-400"
-              title="WebSocket desconectado — se conecta con el backend real"
+              title={conectado ? "WebSocket conectado" : "WebSocket desconectado"}
             >
-              🔴
+              {conectado ? "🟢" : "🔴"}
             </span>
 
             <Notificaciones />

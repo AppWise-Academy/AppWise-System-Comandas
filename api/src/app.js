@@ -14,6 +14,22 @@ import { SuccessResponse } from "./shared/responses/SuccessResponse.js";
 const app = express();
 
 //-------------------
+//0. Trust proxy
+//-------------------
+// Necesario cuando Express corre DETRÁS de un proxy (Cloudflare Tunnel,
+// ngrok, nginx, Heroku/Render, etc): esos proxies agregan un header
+// "X-Forwarded-For" con la IP real del cliente, pero Express, por
+// seguridad, lo ignora por defecto (podría ser falsificado por cualquiera).
+// Sin esto, express-rate-limit ve ese header sin que confiemos en él y
+// tira el warning "ERR_ERL_UNEXPECTED_X_FORWARDED_FOR" (no rompe nada,
+// pero significa que el rate limit está contando SIEMPRE la IP del túnel,
+// no la del cliente real — todos comparten el mismo límite).
+// El "1" significa "confiá en UN salto de proxy delante nuestro" (el
+// proceso de cloudflared/ngrok corriendo en tu propia PC): con eso,
+// req.ip pasa a ser la IP real del cliente en vez de la del túnel.
+app.set("trust proxy", 1);
+
+//-------------------
 //1. Body Parser
 //-------------------
 app.use(express.json({ limit: "10kb" }));
