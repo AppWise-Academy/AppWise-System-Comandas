@@ -1,9 +1,32 @@
 import { create, getById, getAll } from "../services/categoria.service.js";
+import { createCategoriaSchema } from "../schemas/categoria.schema.js";
 import { SuccessResponse } from "../shared/responses/SuccessResponse.js";
 import { parseNonNegativeInteger, parsePositiveInteger } from "../utils/pagination.js";
 
 export async function createCategoria(req, res) {
-  const categoria = await create(req.validated.body);
+  const body = { ...req.body };
+
+  // Normalizo el body de la request
+  if (req.is("multipart/form-data")) {
+    if (body.order !== undefined) {
+      body.order = Number(body.order);
+    }
+
+    if (body.active === "true") {
+      body.active = true;
+    } else if (body.active === "false") {
+      body.active = false;
+    }
+  }
+
+  const uploadedImageUrl = req.file?.path ?? req.file?.secure_url ?? req.file?.url;
+  if (uploadedImageUrl) { 
+    body.image = uploadedImageUrl;
+  }
+
+  const data = createCategoriaSchema.parse(body);
+  const categoria = await create(data);
+
   const response = new SuccessResponse("Category created", 201, categoria);
 
   return res.status(201).json(response);

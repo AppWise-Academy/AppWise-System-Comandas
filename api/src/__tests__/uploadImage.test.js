@@ -67,10 +67,10 @@ describe("Upload de imágenes con Cloudinary", () => {
     expect(storageOptions[0].params.allowed_formats).toEqual(["jpg", "jpeg", "png", "webp"]);
   });
 
-  it("acepta una imagen válida en el campo imagen y expone sus referencias", async () => {
+  it("acepta una imagen válida en el campo image y expone sus referencias", async () => {
     const response = await request(createUploadTestApp(uploadCategoriaImage))
       .post("/upload")
-      .attach("imagen", Buffer.from("valid image"), "menu.webp");
+      .attach("image", Buffer.from("valid image"), "menu.webp");
 
     expect(response.status).toBe(201);
     expect(response.body).toEqual({
@@ -82,7 +82,7 @@ describe("Upload de imágenes con Cloudinary", () => {
   it("rechaza tipos de archivo no permitidos", async () => {
     const response = await request(createUploadTestApp(uploadCategoriaImage))
       .post("/upload")
-      .attach("imagen", Buffer.from("not an image"), "menu.gif");
+      .attach("image", Buffer.from("not an image"), "menu.gif");
 
     expect(response.status).toBe(400);
     expect(response.body.code).toBe("INVALID_IMAGE_TYPE");
@@ -93,7 +93,7 @@ describe("Upload de imágenes con Cloudinary", () => {
     const oversizedImage = Buffer.alloc(5 * 1024 * 1024 + 1, 1);
     const response = await request(createUploadTestApp(uploadProductoImage))
       .post("/upload")
-      .attach("imagen", oversizedImage, "large.png");
+      .attach("image", oversizedImage, "large.png");
 
     expect(response.status).toBe(400);
     expect(response.body.code).toBe("IMAGE_TOO_LARGE");

@@ -4,12 +4,34 @@ import request from "supertest";
 const findMock = jest.fn();
 const countDocumentsMock = jest.fn();
 const findByIdMock = jest.fn();
+const createMock = jest.fn();
+
+class FakeCloudinaryStorage {
+  _handleFile(_req, file, callback) {
+    file.stream.on("data", () => {});
+    file.stream.on("end", () => {
+      callback(undefined, {
+        secure_url: "https://res.cloudinary.com/demo/image/upload/category.webp",
+        filename: "appwise-comandas/menu/categorias/category",
+      });
+    });
+  }
+
+  _removeFile(_req, _file, callback) {
+    callback();
+  }
+}
+
+jest.unstable_mockModule("multer-storage-cloudinary", () => ({
+  CloudinaryStorage: FakeCloudinaryStorage,
+}));
 
 jest.unstable_mockModule("../models/Categoria.js", () => ({
   default: {
     find: findMock,
     countDocuments: countDocumentsMock,
     findById: findByIdMock,
+    create: createMock,
   },
 }));
 
@@ -27,6 +49,66 @@ describe("API de categorías", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
+  });
+
+  it("crea una categoría con imagen opcional usando multipart", async () => {
+    const createdCategory = {
+      _id: "category-1",
+      name: "Entradas",
+      description: "Para compartir",
+      order: 1,
+      active: true,
+      image: "https://res.cloudinary.com/demo/image/upload/category.webp",
+    };
+    createMock.mockResolvedValue(createdCategory);
+
+    const response = await request(app)
+      .post("/api/menu/categorias")
+      .field("name", "Entradas")
+      .field("description", "Para compartir")
+      .field("order", "1")
+      .field("active", "true")
+      .attach("image", Buffer.from("category image"), "category.webp");
+
+    expect(response.status).toBe(201);
+    expect(response.body.data).toEqual(createdCategory);
+    expect(createMock).toHaveBeenCalledWith({
+      name: "Entradas",
+      description: "Para compartir",
+      order: 1,
+      active: true,
+      image: "https://res.cloudinary.com/demo/image/upload/category.webp",
+    });
+  });
+
+  it("crea una categoría sin imagen", async () => {
+    const createdCategory = {
+      _id: "category-2",
+      name: "Postres",
+      description: "Opciones dulces",
+      order: 2,
+      active: true,
+      image: null,
+    };
+    createMock.mockResolvedValue(createdCategory);
+
+    const response = await request(app)
+      .post("/api/menu/categorias")
+      .send({
+        name: "Postres",
+        description: "Opciones dulces",
+        order: 2,
+        active: true,
+      });
+
+    expect(response.status).toBe(201);
+    expect(createMock).toHaveBeenCalledWith({
+      name: "Postres",
+      description: "Opciones dulces",
+      order: 2,
+      active: true,
+      image: null,
+    });
   });
 
   it("devuelve categorías paginadas, filtradas y ordenadas", async () => {
@@ -104,4 +186,3 @@ describe("API de categorías", () => {
     expect(response.body.code).toBe("CATEGORY_NOT_FOUND");
   });
 });
-
