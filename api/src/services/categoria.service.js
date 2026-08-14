@@ -1,19 +1,7 @@
 import CategoriaModel from "../models/Categoria.js";
-import cloudinary from "../config/cloudinary.js";
 import { ApiError, NotFoundError } from "../shared/errors/index.js";
+import { destroyCloudinaryImage } from "../utils/cloudinary.js";
 import { translateMongooseError } from "../utils/errors.js";
-
-async function destroyCloudinaryImage(publicId) {
-  if (!publicId) {
-    return;
-  }
-
-  try {
-    await cloudinary.uploader.destroy(publicId);
-  } catch {
-    // La limpieza es compensatoria y no debe ocultar el error original
-  }
-}
 
 export async function create(data) {
   try {
