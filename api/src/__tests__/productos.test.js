@@ -350,6 +350,53 @@ describe("Products API", () => {
     expect(destroyMock).toHaveBeenCalledWith("appwise-comandas/menu/productos/product");
   });
 
+  it("deactivates a product logically and preserves its image", async () => {
+    const existingProduct = {
+      _id: "product-1",
+      name: "Empanada",
+      active: true,
+      image: "https://res.cloudinary.com/demo/image/upload/product.webp",
+      imagePublicId: "appwise-comandas/menu/productos/product",
+    };
+    const deactivatedProduct = { ...existingProduct, active: false };
+    findProductByIdMock.mockResolvedValue(existingProduct);
+    findProductByIdAndUpdateMock.mockResolvedValue(deactivatedProduct);
+
+    const response = await request(app)
+      .delete("/api/menu/productos/507f1f77bcf86cd799439011");
+
+    expect(response.status).toBe(204);
+    expect(response.text).toBe("");
+    expect(findProductByIdAndUpdateMock).toHaveBeenCalledWith(
+      "507f1f77bcf86cd799439011",
+      { active: false },
+      { returnDocument: "after", runValidators: true },
+    );
+    expect(destroyMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 404 when deactivating a product that does not exist", async () => {
+    findProductByIdMock.mockResolvedValue(null);
+
+    const response = await request(app)
+      .delete("/api/menu/productos/507f1f77bcf86cd799439011");
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("PRODUCT_NOT_FOUND");
+    expect(findProductByIdAndUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 404 for an invalid product ID", async () => {
+    findProductByIdMock.mockRejectedValue({ name: "CastError" });
+
+    const response = await request(app)
+      .delete("/api/menu/productos/not-an-object-id");
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("PRODUCT_NOT_FOUND");
+    expect(findProductByIdAndUpdateMock).not.toHaveBeenCalled();
+  });
+
   it("returns filtered and paginated products with a limited category", async () => {
     const data = [
       {

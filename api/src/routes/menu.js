@@ -8,6 +8,7 @@ import {
 } from "../controllers/categoria.controller.js";
 import {
   createProducto,
+  deleteProducto,
   getAllProductos,
   getProductoById,
   updateProducto,
@@ -25,6 +26,7 @@ router.get("/categorias", getAllCategorias);
 router.get("/categorias/:id", getCategoriaById);
 router.post("/productos", uploadProductoImage, createProducto);
 router.put("/productos/:id", uploadProductoImage, updateProducto);
+router.delete("/productos/:id", deleteProducto);
 router.get("/productos", getAllProductos);
 router.get("/productos/:id", getProductoById);
 

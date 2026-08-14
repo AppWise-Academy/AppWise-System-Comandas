@@ -85,10 +85,40 @@ export async function update(id, data) {
   }
 }
 
-const categoryPopulate = {
-  path: "category",
-  select: "name description order active image imagePublicId",
-};
+export async function deactivate(id) {
+  try {
+    const existingProducto = await ProductoModel.findById(id);
+
+    if (!existingProducto) {
+      throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");
+    }
+
+    const deactivatedProducto = await ProductoModel.findByIdAndUpdate(
+      id,
+      { active: false },
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
+    );
+
+    if (!deactivatedProducto) {
+      throw new ApiError("An error has occurred during product deleting", 500, "PRODUCT_NOT_DEACTIVATED");
+    }
+
+    return deactivatedProducto;
+  } catch (error) {
+    if (error?.name === "CastError") {
+      throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");
+    }
+
+    if (error instanceof NotFoundError) {
+      throw error;
+    }
+
+    translateMongooseError(error, "Invalid product data", "PRODUCT_INVALID");
+  }
+}
 
 export async function getAll({
   skip = 0,
@@ -109,7 +139,10 @@ export async function getAll({
 
   const [data, totalItems] = await Promise.all([
     ProductoModel.find(filter)
-      .populate(categoryPopulate)
+      .populate({
+        path: "category",
+        select: "name description order active image imagePublicId",
+      })
       .sort({ order: 1, name: 1, _id: 1 })
       .skip(skip)
       .limit(limit),
@@ -128,7 +161,10 @@ export async function getAll({
 
 export async function getById(id) {
   try {
-    const producto = await ProductoModel.findById(id).populate(categoryPopulate);
+    const producto = await ProductoModel.findById(id).populate({
+      path: "category",
+      select: "name description order active image imagePublicId",
+    });
 
     if (!producto) {
       throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");

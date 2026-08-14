@@ -74,7 +74,7 @@ export async function deactivate(id) {
     );
 
     if (!deactivatedCategoria) {
-      throw new ApiError("An error has ocurred during category deactivation", 500, "CATEGORY_NOT_DEACTIVATED");
+      throw new ApiError("An error has ocurred during category deleting", 500, "CATEGORY_NOT_DEACTIVATED");
     }
 
     return deactivatedCategoria;
