@@ -499,6 +499,22 @@ describe("Products API", () => {
     expect(query.limit).toHaveBeenCalledWith(20);
   });
 
+  it("returns no products for an invalid category filter", async () => {
+    const response = await request(app)
+      .get("/api/menu/productos")
+      .query({ category: "asd" });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.data).toEqual([]);
+    expect(response.body.data.pagination).toEqual({
+      skip: 0,
+      limit: 20,
+      totalItems: 0,
+    });
+    expect(findProductsMock).not.toHaveBeenCalled();
+    expect(countProductsMock).not.toHaveBeenCalled();
+  });
+
   it("returns a detailed product with a limited category", async () => {
     const data = {
       _id: "product-1",

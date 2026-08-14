@@ -1,5 +1,6 @@
 import CategoriaModel from "../models/Categoria.js";
 import ProductoModel from "../models/Producto.js";
+import mongoose from "mongoose";
 import { ApiError, NotFoundError } from "../shared/errors/index.js";
 import { destroyCloudinaryImage } from "../utils/cloudinary.js";
 import { translateMongooseError } from "../utils/errors.js";
@@ -130,6 +131,17 @@ export async function getAll({
   const filter = { active };
 
   if (category !== undefined) {
+    if (typeof category !== "string" || !mongoose.isValidObjectId(category)) {
+      return {
+        data: [],
+        pagination: {
+          skip,
+          limit,
+          totalItems: 0,
+        },
+      };
+    }
+
     filter.category = category;
   }
 
