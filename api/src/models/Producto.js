@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const productoSchema = new Schema(
   {
-    nombre: {
+    name: {
       type: String,
       required: [true, "Name is required"],
       unique: true,
@@ -10,32 +10,36 @@ const productoSchema = new Schema(
       minlength: [2, "Min 2 characters"],
       maxlength: [120, "Max 120 characters"],
     },
-    descripcion: {
+    description: {
       type: String,
       trim: true,
       maxlength: [1000, "Max 1000 characters"],
     },
-    categoria: {
+    category: {
       type: Schema.Types.ObjectId,
       ref: "Categoria",
       required: [true, "Category is required"],
       index: true,
     },
-    precio: {
+    price: {
       type: Number,
       required: [true, "Price is required"],
       min: [0, "Price cannot be negative"],
     },
-    costo: {
+    cost: {
       type: Number,
       min: [0, "Cost cannot be negative"],
     },
-    disponible: {
+    available: {
       type: Boolean,
       default: true,
       index: true,
     },
-    imagen: {
+    image: {
+      type: String,
+      default: null,
+    },
+    imagePublicId: {
       type: String,
       default: null,
     },
@@ -44,18 +48,18 @@ const productoSchema = new Schema(
       default: -1,
       min: [-1, "Stock cannot be lower than -1"],
     },
-    vendidos: {
+    sold: {
       type: Number,
       default: 0,
       min: [0, "Sold count cannot be negative"],
       index: true,
     },
-    orden: {
+    order: {
       type: Number,
       default: 0,
       min: [0, "Order cannot be negative"],
     },
-    activo: {
+    active: {
       type: Boolean,
       default: true,
       index: true,
@@ -67,10 +71,9 @@ const productoSchema = new Schema(
   },
 );
 
-productoSchema.index({ categoria: 1, activo: 1, disponible: 1, orden: 1, _id: 1 });
-productoSchema.index({ activo: 1, vendidos: -1, _id: 1 });
+productoSchema.index({ category: 1, active: 1, available: 1, order: 1, _id: 1 });
+productoSchema.index({ active: 1, sold: -1, _id: 1 });
 
 const ProductoModel = model("Producto", productoSchema);
 
 export default ProductoModel;
-
