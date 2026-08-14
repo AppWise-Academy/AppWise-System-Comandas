@@ -244,6 +244,53 @@ describe("API de categorías", () => {
     expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
   });
 
+  it("desactiva lógicamente una categoría y conserva sus imágenes", async () => {
+    const existingCategory = {
+      _id: "category-1",
+      name: "Entradas",
+      active: true,
+      image: "https://res.cloudinary.com/demo/image/upload/category.webp",
+      imagePublicId: "appwise-comandas/menu/categorias/category",
+    };
+    const deactivatedCategory = { ...existingCategory, active: false };
+    findByIdMock.mockResolvedValue(existingCategory);
+    findByIdAndUpdateMock.mockResolvedValue(deactivatedCategory);
+
+    const response = await request(app)
+      .delete("/api/menu/categorias/507f1f77bcf86cd799439011");
+
+    expect(response.status).toBe(204);
+    expect(response.text).toBe("");
+    expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
+      "507f1f77bcf86cd799439011",
+      { active: false },
+      { returnDocument: "after", runValidators: true },
+    );
+    expect(destroyMock).not.toHaveBeenCalled();
+  });
+
+  it("devuelve 404 al desactivar una categoría inexistente", async () => {
+    findByIdMock.mockResolvedValue(null);
+
+    const response = await request(app)
+      .delete("/api/menu/categorias/507f1f77bcf86cd799439011");
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("CATEGORY_NOT_FOUND");
+    expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("devuelve 404 para un ID inválido", async () => {
+    findByIdMock.mockRejectedValue({ name: "CastError" });
+
+    const response = await request(app)
+      .delete("/api/menu/categorias/not-an-object-id");
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("CATEGORY_NOT_FOUND");
+    expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
+  });
+
   it("devuelve categorías paginadas, filtradas y ordenadas", async () => {
     const data = [{ name: "Entradas" }, { name: "Postres" }];
     const query = {

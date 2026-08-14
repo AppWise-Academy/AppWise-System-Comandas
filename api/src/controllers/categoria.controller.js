@@ -1,4 +1,4 @@
-import { create, getById, getAll, update } from "../services/categoria.service.js";
+import { create, deactivate, getById, getAll, update } from "../services/categoria.service.js";
 import { createCategoriaSchema, updateCategoriaSchema } from "../schemas/categoria.schema.js";
 import { SuccessResponse } from "../shared/responses/SuccessResponse.js";
 import { normalizeCategoriaBody } from "../utils/categoria.js";
@@ -20,6 +20,12 @@ export async function updateCategoria(req, res) {
   const response = new SuccessResponse("Category updated", 200, categoria);
 
   return res.status(200).json(response);
+}
+
+export async function deleteCategoria(req, res) {
+  await deactivate(req.params.id);
+
+  return res.status(204).send();
 }
 
 export async function getAllCategorias(req, res) {
