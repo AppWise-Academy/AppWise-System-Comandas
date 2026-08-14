@@ -27,3 +27,62 @@ export async function create(data) {
     );
   }
 }
+
+const categoryPopulate = {
+  path: "category",
+  select: "name description order active image imagePublicId",
+};
+
+export async function getAll({
+  skip = 0,
+  limit = 20,
+  category,
+  available,
+  active = true,
+} = {}) {
+  const filter = { active };
+
+  if (category !== undefined) {
+    filter.category = category;
+  }
+
+  if (available !== undefined) {
+    filter.available = available;
+  }
+
+  const [data, totalItems] = await Promise.all([
+    ProductoModel.find(filter)
+      .populate(categoryPopulate)
+      .sort({ order: 1, name: 1, _id: 1 })
+      .skip(skip)
+      .limit(limit),
+    ProductoModel.countDocuments(filter),
+  ]);
+
+  return {
+    data,
+    pagination: {
+      skip,
+      limit,
+      totalItems,
+    },
+  };
+}
+
+export async function getById(id) {
+  try {
+    const producto = await ProductoModel.findById(id).populate(categoryPopulate);
+
+    if (!producto) {
+      throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");
+    }
+
+    return producto;
+  } catch (error) {
+    if (error?.name === "CastError") {
+      throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");
+    }
+
+    throw error;
+  }
+}
