@@ -14,7 +14,7 @@ import {
   updateProductoAvailability,
   updateProducto,
 } from "../controllers/producto.controller.js";
-import { getCarta } from "../controllers/menu.controller.js";
+import { getCarta, getMasVendidos } from "../controllers/menu.controller.js";
 import { uploadCategoriaImage } from "../middlewares/uploadImage.js";
 import { uploadProductoImage } from "../middlewares/uploadImage.js";
 
@@ -41,6 +41,9 @@ router.delete("/productos/:id", deleteProducto);
 
 router.get("/productos", getAllProductos);
 router.get("/productos/:id", getProductoById);
+// Todo: agregar permisos solo para el rol "public"
 router.get("/carta", getCarta);
+// Todo: agregar permisos solo para el rol "public"
+router.get("/mas-vendidos", getMasVendidos);
 
 export default router;

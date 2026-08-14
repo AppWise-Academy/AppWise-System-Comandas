@@ -65,4 +65,11 @@ describe("Product schema", () => {
       }),
     ).toThrow();
   });
+
+  it("defines the compound index used by the global best-selling ranking", () => {
+    expect(ProductoModel.schema.indexes()).toContainEqual([
+      { active: 1, sold: -1, _id: 1 },
+      {},
+    ]);
+  });
 });
