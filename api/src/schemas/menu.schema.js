@@ -16,4 +16,4 @@ export const masVendidosQuerySchema = z.object({
   periodo: z
     .enum(["dia", "semana", "mes"])
     .optional(),
-});
+}).strict();

@@ -41,9 +41,8 @@ router.delete("/productos/:id", deleteProducto);
 
 router.get("/productos", getAllProductos);
 router.get("/productos/:id", getProductoById);
-// Todo: agregar permisos solo para el rol "public"
+
 router.get("/carta", getCarta);
-// Todo: agregar permisos solo para el rol "public"
 router.get("/mas-vendidos", getMasVendidos);
 
 export default router;

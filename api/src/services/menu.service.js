@@ -1,6 +1,6 @@
 import CategoriaModel from "../models/Categoria.js";
 import ProductoModel from "../models/Producto.js";
-import { salesPort } from "../integrations/sales.js";
+import ApiError from "../shared/errors/ApiError.js";
 
 const productSorts = {
   orden: { order: 1, name: 1, _id: 1 },
@@ -46,9 +46,14 @@ export async function getActiveMenu(orderBy = "orden") {
   }));
 }
 
-export async function getBestSelling({ limit = 10, period, sales = salesPort } = {}) {
+export async function getBestSelling({ limit = 10, period } = {}) {
   if (period) {
-    return getTemporalBestSelling({ limit, period, sales });
+    // Todo: esperar la integración de la issue #13 para resolver rankings temporales.
+    throw new ApiError(
+      "Temporal best-selling ranking is not available yet",
+      501,
+      "TEMPORAL_RANKING_UNAVAILABLE",
+    );
   }
 
   return ProductoModel.find({ active: true })
@@ -60,31 +65,4 @@ export async function getBestSelling({ limit = 10, period, sales = salesPort } =
     .sort({ sold: -1, _id: 1 })
     .limit(limit)
     .lean();
-}
-
-async function getTemporalBestSelling({ limit, period, sales }) {
-  const ranking = await sales.getRanking({ period, limit });
-
-  if (ranking.length === 0) {
-    return [];
-  }
-
-  const products = await ProductoModel.find({
-    _id: { $in: ranking.map(({ productId }) => productId) },
-    active: true,
-  })
-    .select(bestSellingProjection)
-    .populate({
-      path: "category",
-      select: categoryProjection,
-    })
-    .lean();
-
-  const productsById = new Map(products.map((product) => [String(product._id), product]));
-
-  return ranking.flatMap(({ productId, quantity }) => {
-    const product = productsById.get(String(productId));
-
-    return product ? [{ ...product, sold: quantity }] : [];
-  });
 }
