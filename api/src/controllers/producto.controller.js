@@ -1,5 +1,16 @@
-import { create, deactivate, getAll, getById, update } from "../services/producto.service.js";
-import { createProductoSchema, updateProductoSchema } from "../schemas/producto.schema.js";
+import {
+  create,
+  deactivate,
+  getAll,
+  getById,
+  update,
+  updateAvailability,
+} from "../services/producto.service.js";
+import {
+  createProductoSchema,
+  updateProductoAvailabilitySchema,
+  updateProductoSchema,
+} from "../schemas/producto.schema.js";
 import { SuccessResponse } from "../shared/responses/SuccessResponse.js";
 import { destroyCloudinaryImage } from "../utils/cloudinary.js";
 import { parseNonNegativeInteger, parsePositiveInteger } from "../utils/pagination.js";
@@ -59,6 +70,15 @@ export async function updateProducto(req, res) {
 export async function deleteProducto(req, res) {
   await deactivate(req.params.id);
   return res.status(204).send();
+}
+
+export async function updateProductoAvailability(req, res) {
+  const { available } = updateProductoAvailabilitySchema.parse(req.body);
+  const producto = await updateAvailability(req.params.id, available);
+
+  const response = new SuccessResponse("Product availability updated", 200, producto);
+
+  return res.status(200).json(response);
 }
 
 export async function getProductoById(req, res) {

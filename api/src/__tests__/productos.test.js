@@ -397,6 +397,59 @@ describe("Products API", () => {
     expect(findProductByIdAndUpdateMock).not.toHaveBeenCalled();
   });
 
+  it("updates product availability", async () => {
+    const updatedProduct = {
+      _id: "product-1",
+      name: "Empanada",
+      available: false,
+    };
+    findProductByIdAndUpdateMock.mockResolvedValue(updatedProduct);
+
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011/disponible")
+      .send({ available: false });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data).toEqual(updatedProduct);
+    expect(findProductByIdAndUpdateMock).toHaveBeenCalledWith(
+      "507f1f77bcf86cd799439011",
+      { available: false },
+      { returnDocument: "after", runValidators: true },
+    );
+  });
+
+  it("rejects an invalid or extra availability body field", async () => {
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011/disponible")
+      .send({ available: "false", active: true });
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(findProductByIdAndUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 404 when changing availability for a missing product", async () => {
+    findProductByIdAndUpdateMock.mockResolvedValue(null);
+
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011/disponible")
+      .send({ available: true });
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("PRODUCT_NOT_FOUND");
+  });
+
+  it("returns 404 for an invalid product ID when changing availability", async () => {
+    findProductByIdAndUpdateMock.mockRejectedValue({ name: "CastError" });
+
+    const response = await request(app)
+      .put("/api/menu/productos/not-an-object-id/disponible")
+      .send({ available: true });
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("PRODUCT_NOT_FOUND");
+  });
+
   it("returns filtered and paginated products with a limited category", async () => {
     const data = [
       {

@@ -140,3 +140,9 @@ export const updateProductoSchema = z.object({
     .boolean()
     .optional(),
 });
+
+export const updateProductoAvailabilitySchema = z
+  .object({
+    available: z.boolean(),
+  })
+  .strict();

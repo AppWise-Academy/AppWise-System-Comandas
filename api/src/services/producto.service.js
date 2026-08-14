@@ -121,6 +121,35 @@ export async function deactivate(id) {
   }
 }
 
+export async function updateAvailability(id, available) {
+  try {
+    const updatedProducto = await ProductoModel.findByIdAndUpdate(
+      id,
+      { available },
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
+    );
+
+    if (!updatedProducto) {
+      throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");
+    }
+
+    return updatedProducto;
+  } catch (error) {
+    if (error?.name === "CastError") {
+      throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");
+    }
+
+    if (error instanceof NotFoundError) {
+      throw error;
+    }
+
+    translateMongooseError(error, "Invalid product data", "PRODUCT_INVALID");
+  }
+}
+
 export async function getAll({
   skip = 0,
   limit = 20,
