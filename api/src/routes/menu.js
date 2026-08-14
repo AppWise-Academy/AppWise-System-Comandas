@@ -14,6 +14,7 @@ import {
   updateProductoAvailability,
   updateProducto,
 } from "../controllers/producto.controller.js";
+import { getCarta } from "../controllers/menu.controller.js";
 import { uploadCategoriaImage } from "../middlewares/uploadImage.js";
 import { uploadProductoImage } from "../middlewares/uploadImage.js";
 
@@ -40,5 +41,6 @@ router.delete("/productos/:id", deleteProducto);
 
 router.get("/productos", getAllProductos);
 router.get("/productos/:id", getProductoById);
+router.get("/carta", getCarta);
 
 export default router;
