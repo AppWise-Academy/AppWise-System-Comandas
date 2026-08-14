@@ -10,6 +10,7 @@ import {
   createProducto,
   getAllProductos,
   getProductoById,
+  updateProducto,
 } from "../controllers/producto.controller.js";
 import { uploadCategoriaImage } from "../middlewares/uploadImage.js";
 import { uploadProductoImage } from "../middlewares/uploadImage.js";
@@ -23,6 +24,7 @@ router.delete("/categorias/:id", deleteCategoria);
 router.get("/categorias", getAllCategorias);
 router.get("/categorias/:id", getCategoriaById);
 router.post("/productos", uploadProductoImage, createProducto);
+router.put("/productos/:id", uploadProductoImage, updateProducto);
 router.get("/productos", getAllProductos);
 router.get("/productos/:id", getProductoById);
 

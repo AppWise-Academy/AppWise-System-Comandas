@@ -1,6 +1,7 @@
 import CategoriaModel from "../models/Categoria.js";
 import ProductoModel from "../models/Producto.js";
-import { NotFoundError } from "../shared/errors/index.js";
+import { ApiError, NotFoundError } from "../shared/errors/index.js";
+import { destroyCloudinaryImage } from "../utils/cloudinary.js";
 import { translateMongooseError } from "../utils/errors.js";
 
 export async function create(data) {
@@ -25,6 +26,62 @@ export async function create(data) {
       error?.code === 11000 ? "Product name is already registered" : "Invalid product data",
       error?.code === 11000 ? "PRODUCT_NAME_DUPLICATE" : "PRODUCT_INVALID",
     );
+  }
+}
+
+export async function update(id, data) {
+  let imageToDestroy = null;
+
+  try {
+    const existingProducto = await ProductoModel.findById(id);
+
+    if (!existingProducto) {
+      throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");
+    }
+
+    if (data.category !== undefined) {
+      const activeCategory = await CategoriaModel.findOne({
+        _id: data.category,
+        active: true,
+      });
+
+      if (!activeCategory) {
+        throw new NotFoundError("Category not found or inactive", "CATEGORY_NOT_FOUND");
+      }
+    }
+
+    const updatedProducto = await ProductoModel.findByIdAndUpdate(id, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+
+    if (!updatedProducto) {
+      throw new ApiError("An error has occurred during product updating", 500, "PRODUCT_NOT_UPDATED");
+    }
+
+    imageToDestroy = data.imagePublicId
+      ? existingProducto.imagePublicId
+      : null;
+
+    return updatedProducto;
+  } catch (error) {
+    imageToDestroy = data.imagePublicId ?? null;
+
+    if (error?.name === "CastError") {
+      throw new NotFoundError("Product not found", "PRODUCT_NOT_FOUND");
+    }
+
+    if (error instanceof NotFoundError) {
+      throw error;
+    }
+
+    translateMongooseError(
+      error,
+      error?.code === 11000 ? "Product name is already registered" : "Invalid product data",
+      error?.code === 11000 ? "PRODUCT_NAME_DUPLICATE" : "PRODUCT_INVALID",
+    );
+  } finally {
+    await destroyCloudinaryImage(imageToDestroy);
   }
 }
 

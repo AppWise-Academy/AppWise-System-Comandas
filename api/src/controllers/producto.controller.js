@@ -1,5 +1,5 @@
-import { create, getAll, getById } from "../services/producto.service.js";
-import { createProductoSchema } from "../schemas/producto.schema.js";
+import { create, getAll, getById, update } from "../services/producto.service.js";
+import { createProductoSchema, updateProductoSchema } from "../schemas/producto.schema.js";
 import { SuccessResponse } from "../shared/responses/SuccessResponse.js";
 import { destroyCloudinaryImage } from "../utils/cloudinary.js";
 import { parseNonNegativeInteger, parsePositiveInteger } from "../utils/pagination.js";
@@ -36,6 +36,22 @@ export async function getAllProductos(req, res) {
   });
 
   const response = new SuccessResponse("Products retrieved", 200, result);
+
+  return res.status(200).json(response);
+}
+
+export async function updateProducto(req, res) {
+  let data;
+
+  try {
+    data = updateProductoSchema.parse(normalizeProductoBody(req));
+  } catch (error) {
+    await destroyCloudinaryImage(req.file?.filename);
+    throw error;
+  }
+
+  const producto = await update(req.params.id, data);
+  const response = new SuccessResponse("Product updated", 200, producto);
 
   return res.status(200).json(response);
 }

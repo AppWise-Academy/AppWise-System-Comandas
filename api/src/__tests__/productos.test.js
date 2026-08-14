@@ -6,6 +6,7 @@ const createProductMock = jest.fn();
 const findProductsMock = jest.fn();
 const countProductsMock = jest.fn();
 const findProductByIdMock = jest.fn();
+const findProductByIdAndUpdateMock = jest.fn();
 const destroyMock = jest.fn();
 
 class FakeCloudinaryStorage {
@@ -48,6 +49,7 @@ jest.unstable_mockModule("../models/Producto.js", () => ({
     find: findProductsMock,
     countDocuments: countProductsMock,
     findById: findProductByIdMock,
+    findByIdAndUpdate: findProductByIdAndUpdateMock,
   },
 }));
 
@@ -60,6 +62,7 @@ describe("Products API", () => {
     findProductsMock.mockReset();
     countProductsMock.mockReset();
     findProductByIdMock.mockReset();
+    findProductByIdAndUpdateMock.mockReset();
     destroyMock.mockReset();
   });
 
@@ -202,6 +205,149 @@ describe("Products API", () => {
 
     expect(response.status).toBe(409);
     expect(response.body.code).toBe("PRODUCT_NAME_DUPLICATE");
+  });
+
+  it("updates a product partially without changing omitted fields", async () => {
+    const existingProduct = {
+      _id: "product-1",
+      name: "Empanada",
+      category: "category-1",
+      price: 1500,
+      available: true,
+      image: null,
+      imagePublicId: null,
+      active: true,
+    };
+    const updatedProduct = { ...existingProduct, name: "Empanada criolla" };
+    findProductByIdMock.mockResolvedValue(existingProduct);
+    findProductByIdAndUpdateMock.mockResolvedValue(updatedProduct);
+
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011")
+      .send({ name: "Empanada criolla" });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data).toEqual(updatedProduct);
+    expect(findProductByIdAndUpdateMock).toHaveBeenCalledWith(
+      "507f1f77bcf86cd799439011",
+      { name: "Empanada criolla" },
+      { returnDocument: "after", runValidators: true },
+    );
+  });
+
+  it("rejects invalid data before querying the product", async () => {
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011")
+      .send({ price: -1 });
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(findProductByIdMock).not.toHaveBeenCalled();
+    expect(findProductByIdAndUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects an inactive category when changing the product category", async () => {
+    findProductByIdMock.mockResolvedValue({
+      _id: "product-1",
+      category: "category-1",
+      imagePublicId: null,
+    });
+    findOneCategoryMock.mockResolvedValue(null);
+
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011")
+      .send({ category: "507f1f77bcf86cd799439012" });
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("CATEGORY_NOT_FOUND");
+    expect(findOneCategoryMock).toHaveBeenCalledWith({
+      _id: "507f1f77bcf86cd799439012",
+      active: true,
+    });
+    expect(findProductByIdAndUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 404 when the product to update does not exist", async () => {
+    findProductByIdMock.mockResolvedValue(null);
+
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011")
+      .send({ name: "Empanada criolla" });
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("PRODUCT_NOT_FOUND");
+    expect(findProductByIdAndUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 409 when the updated product name is duplicated", async () => {
+    findProductByIdMock.mockResolvedValue({
+      _id: "product-1",
+      name: "Empanada",
+      imagePublicId: null,
+    });
+    findProductByIdAndUpdateMock.mockRejectedValue({ code: 11000 });
+
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011")
+      .send({ name: "Limonada" });
+
+    expect(response.status).toBe(409);
+    expect(response.body.code).toBe("PRODUCT_NAME_DUPLICATE");
+  });
+
+  it("replaces the image after persisting the new reference", async () => {
+    const existingProduct = {
+      _id: "product-1",
+      name: "Empanada",
+      image: "https://res.cloudinary.com/demo/image/upload/old-product.webp",
+      imagePublicId: "appwise-comandas/menu/productos/old-product",
+    };
+    const updatedProduct = {
+      ...existingProduct,
+      image: "https://res.cloudinary.com/demo/image/upload/product.webp",
+      imagePublicId: "appwise-comandas/menu/productos/product",
+    };
+    findProductByIdMock.mockResolvedValue(existingProduct);
+    findProductByIdAndUpdateMock.mockResolvedValue(updatedProduct);
+    destroyMock.mockResolvedValue({ result: "ok" });
+
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011")
+      .field("name", "Empanada")
+      .attach("image", Buffer.from("new product image"), "product.webp");
+
+    expect(response.status).toBe(200);
+    expect(response.body.data).toEqual(updatedProduct);
+    expect(findProductByIdAndUpdateMock).toHaveBeenCalledWith(
+      "507f1f77bcf86cd799439011",
+      {
+        name: "Empanada",
+        image: "https://res.cloudinary.com/demo/image/upload/product.webp",
+        imagePublicId: "appwise-comandas/menu/productos/product",
+      },
+      { returnDocument: "after", runValidators: true },
+    );
+    expect(destroyMock.mock.invocationCallOrder[0]).toBeGreaterThan(
+      findProductByIdAndUpdateMock.mock.invocationCallOrder[0],
+    );
+    expect(destroyMock).toHaveBeenCalledWith("appwise-comandas/menu/productos/old-product");
+  });
+
+  it("cleans the new image when product persistence fails", async () => {
+    findProductByIdMock.mockResolvedValue({
+      _id: "product-1",
+      imagePublicId: "appwise-comandas/menu/productos/old-product",
+    });
+    findProductByIdAndUpdateMock.mockRejectedValue(new Error("Database unavailable"));
+
+    const response = await request(app)
+      .put("/api/menu/productos/507f1f77bcf86cd799439011")
+      .field("name", "Empanada")
+      .attach("image", Buffer.from("new product image"), "product.webp");
+
+    expect(response.status).toBe(500);
+    expect(response.body.success).toBe(false);
+    expect(destroyMock).toHaveBeenCalledWith("appwise-comandas/menu/productos/product");
   });
 
   it("returns filtered and paginated products with a limited category", async () => {

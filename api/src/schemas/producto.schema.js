@@ -72,3 +72,71 @@ export const createProductoSchema = z.object({
     .boolean()
     .default(true),
 });
+
+export const updateProductoSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Min 2 characters")
+    .max(120, "Max 120 characters")
+    .optional(),
+
+  description: z
+    .string()
+    .trim()
+    .max(1000, "Max 1000 characters")
+    .optional(),
+
+  category: z
+    .string()
+    .regex(objectIdPattern, "Category must be a valid ObjectId")
+    .optional(),
+
+  price: z
+    .number()
+    .min(0, "Price cannot be negative")
+    .optional(),
+
+  cost: z
+    .number()
+    .min(0, "Cost cannot be negative")
+    .optional(),
+
+  available: z
+    .boolean()
+    .optional(),
+
+  image: z
+    .string()
+    .url("Image must be a valid URL")
+    .nullable()
+    .optional(),
+
+  imagePublicId: z
+    .string()
+    .trim()
+    .nullable()
+    .optional(),
+
+  stock: z
+    .number()
+    .int("Stock must be an integer")
+    .min(-1, "Stock cannot be lower than -1")
+    .optional(),
+
+  sold: z
+    .number()
+    .int("Sold count must be an integer")
+    .min(0, "Sold count cannot be negative")
+    .optional(),
+
+  order: z
+    .number()
+    .int("Order must be an integer")
+    .min(0, "Order cannot be negative")
+    .optional(),
+
+  active: z
+    .boolean()
+    .optional(),
+});
