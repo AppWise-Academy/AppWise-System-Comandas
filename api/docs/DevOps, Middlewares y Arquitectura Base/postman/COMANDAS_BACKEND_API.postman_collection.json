@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "8e900c50-6f2e-48aa-88a5-a3d548e40fda",
+    "_postman_id": "d740d27e-2edf-44ab-8310-588cc09cdab1",
     "name": "COMANDAS BACKEND API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "46206261"
+    "_exporter_id": "34896670"
   },
   "item": [
     {
@@ -304,6 +304,636 @@
           }
         }
       ]
+    },
+    {
+      "name": "Tests categorías",
+      "item": [
+        {
+          "name": "Obtener todas las categorias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/categorias",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "categorias"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener todas las categorias eliminadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/categorias?activas=false",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "categorias"
+              ],
+              "query": [
+                {
+                  "key": "activas",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear categoría",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"La categoría fue creada\", () => {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta fue exitosa\", () => {\r",
+                  "    pm.expect(body.success).to.eql(true);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta contiene el ID\", () => {\r",
+                  "    pm.expect(body.data._id).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"categoryId\", body.data._id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Hardware",
+                  "type": "text",
+                  "uuid": "1bebf9e4-0929-4223-adbb-8bfa27c85a0f"
+                },
+                {
+                  "key": "description",
+                  "value": "Adquiere mejores componentes para tu pc",
+                  "type": "text",
+                  "uuid": "c7255bfb-78fb-494e-90e2-e763af8dd3b3"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "a850029d-c47d-41b9-9a66-8f128bf1564f",
+                  "src": "xUE_29Kvu/hardware.jfif"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/categorias",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "categorias"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear categoría con rol COCINA (403)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_cocina}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Hardware",
+                  "type": "text",
+                  "uuid": "1bebf9e4-0929-4223-adbb-8bfa27c85a0f"
+                },
+                {
+                  "key": "description",
+                  "value": "Adquiere mejores componentes para tu pc",
+                  "type": "text",
+                  "uuid": "c7255bfb-78fb-494e-90e2-e763af8dd3b3"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "a850029d-c47d-41b9-9a66-8f128bf1564f",
+                  "src": "xUE_29Kvu/hardware.jfif"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/categorias",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "categorias"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar categoría",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "description",
+                  "value": "El mejor hardware al mejor precio",
+                  "type": "text",
+                  "uuid": "81e50662-0080-441a-b93a-44c5e5e65bfb"
+                },
+                {
+                  "key": "order",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "55f85cca-59df-47bb-85ca-8504776ea278"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/categorias/{{categoryId}}",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "categorias",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar categoría con rol COCINA (403)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_cocina}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "description",
+                  "value": "El mejor hardware al mejor precio",
+                  "type": "text",
+                  "uuid": "81e50662-0080-441a-b93a-44c5e5e65bfb"
+                },
+                {
+                  "key": "order",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "55f85cca-59df-47bb-85ca-8504776ea278"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/categorias/{{categoryId}}",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "categorias",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar categoría",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Hardware",
+                  "type": "text",
+                  "uuid": "1bebf9e4-0929-4223-adbb-8bfa27c85a0f"
+                },
+                {
+                  "key": "description",
+                  "value": "Adquiere mejores componentes para tu pc",
+                  "type": "text",
+                  "uuid": "c7255bfb-78fb-494e-90e2-e763af8dd3b3"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "a850029d-c47d-41b9-9a66-8f128bf1564f",
+                  "src": "xUE_29Kvu/hardware.jfif"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/categorias/{{categoryId}}",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "categorias",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tests productos",
+      "item": [
+        {
+          "name": "Obtener todos los productos con categorías",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Hardware",
+                  "type": "text",
+                  "uuid": "1bebf9e4-0929-4223-adbb-8bfa27c85a0f"
+                },
+                {
+                  "key": "description",
+                  "value": "Adquiere mejores componentes para tu pc",
+                  "type": "text",
+                  "uuid": "c7255bfb-78fb-494e-90e2-e763af8dd3b3"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "a850029d-c47d-41b9-9a66-8f128bf1564f",
+                  "src": "xUE_29Kvu/hardware.jfif"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/productos",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "productos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener todos los productos eliminados",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Hardware",
+                  "type": "text",
+                  "uuid": "1bebf9e4-0929-4223-adbb-8bfa27c85a0f"
+                },
+                {
+                  "key": "description",
+                  "value": "Adquiere mejores componentes para tu pc",
+                  "type": "text",
+                  "uuid": "c7255bfb-78fb-494e-90e2-e763af8dd3b3"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "a850029d-c47d-41b9-9a66-8f128bf1564f",
+                  "src": "xUE_29Kvu/hardware.jfif"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/productos?active=false",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "active",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear producto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"El producto fue creado\", () => {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "    pm.expect(body.success).to.eql(true);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta contiene el ID\", () => {\r",
+                  "    pm.expect(body.data._id).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"productId\", body.data._id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Ryzen 5 5600GT",
+                  "type": "text",
+                  "uuid": "1bebf9e4-0929-4223-adbb-8bfa27c85a0f"
+                },
+                {
+                  "key": "description",
+                  "value": "Procesador balanceado para gaming y multitarea, modelo TURBO con gráfica integrada Vega 8\n",
+                  "type": "text",
+                  "uuid": "c7255bfb-78fb-494e-90e2-e763af8dd3b3"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "a850029d-c47d-41b9-9a66-8f128bf1564f",
+                  "src": "ahoKr_xor/r55600g.webp"
+                },
+                {
+                  "key": "category",
+                  "value": "{{categoryId}}",
+                  "type": "text",
+                  "uuid": "cafc3ba0-9175-4928-9105-a74b38cfb9a3"
+                },
+                {
+                  "key": "price",
+                  "value": "180000",
+                  "type": "text",
+                  "uuid": "4adc1f3e-260b-4db2-a888-60314dc30f21"
+                },
+                {
+                  "key": "cost",
+                  "value": "10000",
+                  "type": "text",
+                  "uuid": "7d7a7c4b-137a-423f-8358-9ac7d24fe542"
+                },
+                {
+                  "key": "stock",
+                  "value": "20",
+                  "type": "text",
+                  "uuid": "aa32d94f-d6ef-429b-978f-725031c11310"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/productos",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "productos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar producto",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "description",
+                  "value": "Procesador perfectamente balanceado para gaming y multitarea, modelo TURBO con gráfica integrada Vega 8\n",
+                  "type": "text",
+                  "uuid": "c7255bfb-78fb-494e-90e2-e763af8dd3b3"
+                },
+                {
+                  "key": "stock",
+                  "value": "15",
+                  "type": "text",
+                  "uuid": "aa32d94f-d6ef-429b-978f-725031c11310"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/productos/{{productId}}",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "productos",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar producto",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "description",
+                  "value": "Procesador perfectamente balanceado para gaming y multitarea, modelo TURBO con gráfica integrada Vega 8\n",
+                  "type": "text",
+                  "uuid": "c7255bfb-78fb-494e-90e2-e763af8dd3b3"
+                },
+                {
+                  "key": "stock",
+                  "value": "15",
+                  "type": "text",
+                  "uuid": "aa32d94f-d6ef-429b-978f-725031c11310"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE}}/{{BASE_MENU}}/productos/{{productId}}",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "{{BASE_MENU}}",
+                "productos",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "event": [
@@ -333,6 +963,26 @@
   "variable": [
     {
       "key": "BASE",
+      "value": ""
+    },
+    {
+      "key": "BASE_MENU",
+      "value": ""
+    },
+    {
+      "key": "auth_secret_admin",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_cocina",
+      "secret": true
+    },
+    {
+      "key": "categoryId",
+      "value": ""
+    },
+    {
+      "key": "productId",
       "value": ""
     }
   ]
