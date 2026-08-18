@@ -1,8 +1,5 @@
-// ============================================================
-// src/middlewares/roleGuard.js
 // Verifica que el usuario tiene el rol requerido.
 // Se usa SIEMPRE después de authGuard.
-// ============================================================
 
 function roleGuard(...rolesPermitidos) {
   return (req, res, next) => {
@@ -22,4 +19,4 @@ function roleGuard(...rolesPermitidos) {
   };
 }
 
-module.exports = roleGuard;
+export default roleGuard;

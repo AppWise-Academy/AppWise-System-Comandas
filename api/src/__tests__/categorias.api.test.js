@@ -36,6 +36,14 @@ jest.unstable_mockModule("../config/cloudinary.js", () => ({
   },
 }));
 
+jest.unstable_mockModule("../middlewares/authGuard.js", () => ({
+  default: (_req, _res, next) => next(),
+}));
+
+jest.unstable_mockModule("../middlewares/roleGuard.js", () => ({
+  default: (..._roles) => (_req, _res, next) => next(),
+}));
+
 jest.unstable_mockModule("../models/Categoria.js", () => ({
   default: {
     find: findMock,

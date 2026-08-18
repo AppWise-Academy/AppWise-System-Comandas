@@ -15,30 +15,23 @@ import {
   updateProducto,
 } from "../controllers/producto.controller.js";
 import { getCarta, getMasVendidos } from "../controllers/menu.controller.js";
+import authGuard from "../middlewares/authGuard.js";
+import roleGuard from "../middlewares/roleGuard.js";
 import { uploadCategoriaImage } from "../middlewares/uploadImage.js";
 import { uploadProductoImage } from "../middlewares/uploadImage.js";
 
 const router = Router();
 
-// Todo: agregar permisos solo para el rol "admin"
-router.post("/categorias", uploadCategoriaImage, createCategoria);
-// Todo: agregar permisos solo para el rol "admin"
-router.put("/categorias/:id", uploadCategoriaImage, updateCategoria);
-// Todo: agregar permisos solo para el rol "admin"
-router.delete("/categorias/:id", deleteCategoria);
-
+router.post("/categorias", authGuard, roleGuard("admin"), uploadCategoriaImage, createCategoria);
+router.put("/categorias/:id", authGuard, roleGuard("admin"), uploadCategoriaImage, updateCategoria);
+router.delete("/categorias/:id", authGuard, roleGuard("admin"), deleteCategoria); 
 router.get("/categorias", getAllCategorias);
 router.get("/categorias/:id", getCategoriaById);
 
-// Todo: agregar permisos solo para el rol "admin"
-router.post("/productos", uploadProductoImage, createProducto);
-// Todo: agregar permisos solo para el rol "admin"
-router.put("/productos/:id", uploadProductoImage, updateProducto);
-// Todo: agregar permisos solo para los roles "admin" y "cocina"
-router.put("/productos/:id/disponible", updateProductoAvailability);
-// Todo: agregar permisos solo para el rol "admin"
-router.delete("/productos/:id", deleteProducto);
-
+router.post("/productos", authGuard, roleGuard("admin"), uploadProductoImage, createProducto);
+router.put("/productos/:id", authGuard, roleGuard("admin"), uploadProductoImage, updateProducto);
+router.put("/productos/:id/disponible", authGuard, roleGuard("admin", "cocina"), updateProductoAvailability);
+router.delete("/productos/:id", authGuard, roleGuard("admin"), deleteProducto);
 router.get("/productos", getAllProductos);
 router.get("/productos/:id", getProductoById);
 
