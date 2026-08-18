@@ -1,5 +1,6 @@
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { extname } from "node:path";
 import cloudinary from "../config/cloudinary.js";
 import { ValidationError } from "../shared/errors/index.js";
 
@@ -7,10 +8,11 @@ export const IMAGE_FIELD_NAME = "image";
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const ALLOWED_IMAGE_MIME_TYPES = [
   "image/jpeg",
+  "image/jfif",
   "image/png",
   "image/webp",
 ];
-export const ALLOWED_IMAGE_FORMATS = ["jpg", "jpeg", "png", "webp"];
+export const ALLOWED_IMAGE_FORMATS = ["jpg", "jpeg", "jfif", "png", "webp"];
 
 /**
  * Valida el MIME type del archivo antes de enviarlo a Cloudinary.
@@ -19,10 +21,14 @@ export const ALLOWED_IMAGE_FORMATS = ["jpg", "jpeg", "png", "webp"];
  * permitidos se convierten en un error controlado por el errorHandler global.
  */
 function imageFileFilter(_req, file, callback) {
-  if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype)) {
+  const extension = extname(file.originalname).slice(1).toLowerCase();
+  const hasAllowedMimeType = ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype);
+  const hasAllowedExtension = ALLOWED_IMAGE_FORMATS.includes(extension);
+
+  if (!hasAllowedMimeType && !hasAllowedExtension) {
     return callback(
       new ValidationError(
-        "Only JPG, JPEG, PNG and WebP images are allowed",
+        "Only JPG, JPEG, JFIF, PNG and WebP images are allowed",
         "INVALID_IMAGE_TYPE",
       ),
     );

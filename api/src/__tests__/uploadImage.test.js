@@ -64,7 +64,13 @@ describe("Upload de imágenes con Cloudinary", () => {
       "appwise-comandas/menu/categorias",
       "appwise-comandas/menu/productos",
     ]);
-    expect(storageOptions[0].params.allowed_formats).toEqual(["jpg", "jpeg", "png", "webp"]);
+    expect(storageOptions[0].params.allowed_formats).toEqual([
+      "jpg",
+      "jpeg",
+      "jfif",
+      "png",
+      "webp",
+    ]);
   });
 
   it("acepta una imagen válida en el campo image y expone sus referencias", async () => {
@@ -77,6 +83,14 @@ describe("Upload de imágenes con Cloudinary", () => {
       secureUrl: "https://res.cloudinary.com/demo/image/upload/menu/image.webp",
       publicId: "appwise/menu/image",
     });
+  });
+
+  it("acepta una imagen JFIF en el campo image", async () => {
+    const response = await request(createUploadTestApp(uploadCategoriaImage))
+      .post("/upload")
+      .attach("image", Buffer.from("valid jfif image"), "menu.jfif");
+
+    expect(response.status).toBe(201);
   });
 
   it("rechaza tipos de archivo no permitidos", async () => {
