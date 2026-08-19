@@ -7,6 +7,15 @@ export const SETTINGS_ENV = {
   db: {
     uri: required("MONGO_URI"),
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiresIn: process.JWT_EXPIRES_IN
+  },
+  cloudinary: {
+    cloudName: required("CLOUDINARY_CLOUD_NAME"),
+    apiKey: required("CLOUDINARY_API_KEY"),
+    apiSecret: required("CLOUDINARY_API_SECRET")
+  },
   mail: {
     // OJO: acá NO usamos required(). Si un alumno todavía no configuró
     // SMTP o Resend, la app tiene que poder levantar igual (solo van a
