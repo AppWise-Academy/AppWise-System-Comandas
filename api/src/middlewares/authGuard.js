@@ -1,37 +1,40 @@
 import jwt from "jsonwebtoken";
-import { ErrorResponse } from "../shared/responses/ErrorResponse.js";
 
-export const authGuard = (req, res, next) => {
+function authGuard(req, res, next) {
+
+  // 1- leer el header authorization
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      ok: false,
+      error: "Token requerido. Envia: Authorozation: Bearer TOKEN",
+    });
+  }
+
+  // 2. Extraer el token
+  const token = authHeader.split(" ")[1];
+
+  //3. Verificar el token
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      const error = new ErrorResponse(
-        "No token provided",
-        401,
-        null,
-        req.originalUrl,
-      );
-      return res.status(401).json(error);
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "secret_de_prueba",
-    );
-
-    req.user = decoded;
-
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // {userId, email, rol, iat, exp}
     next();
   } catch (error) {
-    const authError = new ErrorResponse(
-      "No autorizado / Token inválido",
-      401,
-      null,
-      req.originalUrl,
-    );
-    return res.status(401).json(authError);
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        ok:false,
+        error: "Token Expirado",
+        code: "TOKEN_EXPIRED",
+      });
+    }
+
+    return res.status(401).json({
+      ok: false,
+      error: "Token inválido",
+      code: "TOKEN_INVALID",
+    });
   }
-};
+}
+
+export default authGuard;
