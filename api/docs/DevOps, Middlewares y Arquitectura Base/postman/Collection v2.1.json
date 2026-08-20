@@ -1,0 +1,388 @@
+{
+  "info": {
+    "_postman_id": "d452271a-8a8c-41e6-8141-7b0a0cd2f4e9",
+    "name": "COMANDAS BACKEND API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "34142818",
+    "_collection_link": "https://go.postman.co/collection/34142818-d452271a-8a8c-41e6-8141-7b0a0cd2f4e9?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Tests",
+      "item": [
+        {
+          "name": "Petición exitosa (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// =======================",
+                  "// Status",
+                  "// =======================",
+                  "pm.test(\"Status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// =======================",
+                  "// Helmet",
+                  "// =======================",
+                  "pm.test(\"Tiene X-Frame-Options\", () => {",
+                  "    pm.response.to.have.header(\"X-Frame-Options\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene X-Content-Type-Options\", () => {",
+                  "    pm.response.to.have.header(\"X-Content-Type-Options\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene Referrer-Policy\", () => {",
+                  "    pm.response.to.have.header(\"Referrer-Policy\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene Cross-Origin-Opener-Policy\", () => {",
+                  "    pm.response.to.have.header(\"Cross-Origin-Opener-Policy\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene Cross-Origin-Resource-Policy\", () => {",
+                  "    pm.response.to.have.header(\"Cross-Origin-Resource-Policy\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene Origin-Agent-Cluster\", () => {",
+                  "    pm.response.to.have.header(\"Origin-Agent-Cluster\");",
+                  "});",
+                  "",
+                  "// =======================",
+                  "// CORS",
+                  "// =======================",
+                  "pm.test(\"Tiene Access-Control-Allow-Origin\", () => {",
+                  "    pm.response.to.have.header(\"Access-Control-Allow-Origin\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene Access-Control-Allow-Credentials\", () => {",
+                  "    pm.response.to.have.header(\"Access-Control-Allow-Credentials\");",
+                  "});",
+                  "",
+                  "// =======================",
+                  "// Rate Limit",
+                  "// =======================",
+                  "pm.test(\"Tiene header RateLimit\", () => {",
+                  "    pm.response.to.have.header(\"RateLimit-Limit\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene header RateLimit-Policy\", () => {",
+                  "    pm.response.to.have.header(\"RateLimit-Policy\");",
+                  "});",
+                  "",
+                  "// =======================",
+                  "// Estructura respuesta",
+                  "// =======================",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"Tiene success\", () => {",
+                  "    pm.expect(body).to.have.property(\"success\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene message\", () => {",
+                  "    pm.expect(body).to.have.property(\"message\");",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene timestamp\", () => {",
+                  "    pm.expect(body).to.have.property(\"timestamp\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:5173",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE}}/health",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "**Endpoint:** `GET {{BASE}}/health`\n\n**Respuesta exitosa esperada:** código `200 OK`."
+          },
+          "response": []
+        },
+        {
+          "name": "Error de validación (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// =======================\r",
+                  "// Status\r",
+                  "// =======================\r",
+                  "pm.test(\"Status 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "// =======================\r",
+                  "// Helmet\r",
+                  "// =======================\r",
+                  "pm.test(\"Tiene X-Frame-Options\", () => {\r",
+                  "    pm.response.to.have.header(\"X-Frame-Options\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene X-Content-Type-Options\", () => {\r",
+                  "    pm.response.to.have.header(\"X-Content-Type-Options\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene Referrer-Policy\", () => {\r",
+                  "    pm.response.to.have.header(\"Referrer-Policy\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene Cross-Origin-Opener-Policy\", () => {\r",
+                  "    pm.response.to.have.header(\"Cross-Origin-Opener-Policy\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene Cross-Origin-Resource-Policy\", () => {\r",
+                  "    pm.response.to.have.header(\"Cross-Origin-Resource-Policy\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene Origin-Agent-Cluster\", () => {\r",
+                  "    pm.response.to.have.header(\"Origin-Agent-Cluster\");\r",
+                  "});\r",
+                  "\r",
+                  "// =======================\r",
+                  "// CORS\r",
+                  "// =======================\r",
+                  "pm.test(\"Tiene Access-Control-Allow-Origin\", () => {\r",
+                  "    pm.response.to.have.header(\"Access-Control-Allow-Origin\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene Access-Control-Allow-Credentials\", () => {\r",
+                  "    pm.response.to.have.header(\"Access-Control-Allow-Credentials\");\r",
+                  "});\r",
+                  "\r",
+                  "// =======================\r",
+                  "// Rate Limit\r",
+                  "// =======================\r",
+                  "pm.test(\"Tiene header RateLimit\", () => {\r",
+                  "    pm.response.to.have.header(\"RateLimit-Limit\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene header RateLimit-Policy\", () => {\r",
+                  "    pm.response.to.have.header(\"RateLimit-Policy\");\r",
+                  "});\r",
+                  "\r",
+                  "// =======================\r",
+                  "// Estructura respuesta\r",
+                  "// =======================\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Tiene success\", () => {\r",
+                  "    pm.expect(body).to.have.property(\"success\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene message\", () => {\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiene timestamp\", () => {\r",
+                  "    pm.expect(body).to.have.property(\"timestamp\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:5173",
+                "description": "origin de development",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"Martin\",\r\n    \"email\": \"martin@example.com\",\r\n    \"password\": \"Mar\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE}}/api/auth/register",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Esta solicitud demuestra un error de validación **400 Bad Request** en el endpoint de registro. El resultado esperado es que el servidor rechace la solicitud y devuelva una respuesta 400 con detalles generales sobre los campos que no pasaron la validación."
+          },
+          "response": []
+        },
+        {
+          "name": "Rate Limit excedido (429)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"Martin\",\r\n    \"email\": \"martin@example.com\",\r\n    \"password\": \"Mar\"\r\n}"
+            },
+            "url": {
+              "raw": "{{BASE}}/api/auth/register",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "El servidor debe responder con código **429 Too Many Requests** e indicar que se debe intentar nuevamente más tarde.\n\nBody de ejemplo. Enviar 6 veces.\n\n``` json\n{\n    \"name\":\"Martin\",\n    \"email\": \"martin@example.com\",\n    \"password\": \"Mar\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Error no controlado (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE}}/error",
+              "host": [
+                "{{BASE}}"
+              ],
+              "path": [
+                "error"
+              ]
+            },
+            "description": "## Propósito\n\nValida el comportamiento del servidor ante un error no controlado.\n\n## Método y endpoint\n\n`GET {{BASE}}/error`\n\n## Respuesta esperada (500)\n\nRetorna un error interno del servidor con una respuesta similar a:\n\n``` json\n{\n  \"success\": false,\n  \"statusCode\": 500,\n  \"message\": \"Internal server error\",\n  \"timestamp\": \"2026-08-04T15:33:31.366Z\",\n  \"path\": \"/error\"\n}\n\n ```\n\n## Nota\n\nEste endpoint se utiliza para validar el manejo de errores no controlados del servidor."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Mesa",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Mesas",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Editar Mesa",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Abrir Mesa",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Cuenta",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Liberar Mesa",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE",
+      "value": ""
+    }
+  ]
+}
